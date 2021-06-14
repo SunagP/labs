@@ -1,0 +1,227 @@
+
+1.List out the employee id, last name in ascending order based on the employee id.
+
+select eid,lname from emp order by eid;
++------+--------+
+| eid  | lname  |
++------+--------+
+| 7369 | smith  |
+| 7499 | allen  |
+| 7505 | doyle  |
+| 7506 | dennis |
+| 7507 | baker  |
+| 7521 | wark   |
+| 7839 | megan  |
++------+--------+
+
+2.List out the employee id, name in descending order based on salary column
+
+MariaDB [lab_4]> select eid,lname from emp order by sal desc;
++------+--------+
+| eid  | lname  |
++------+--------+
+| 7839 | megan  |
+| 7505 | doyle  |
+| 7506 | dennis |
+| 7507 | baker  |
+| 7499 | allen  |
+| 7521 | wark   |
+| 7369 | smith  |
++------+--------+
+
+
+
+3.list out the employee details according to their last_name in ascending order and salaries in descending order
+select * from emp order by sal desc,lname;
+select * from emp order by lname asc,sal desc;
+select * from emp order by lname ,sal desc;
+
+
+4.list out the employee details according to their last_name in ascending order and then on department_id in descending order.
+
+select * from emp order by lname asc,dept_id desc;
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname  | fname   | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| 7499 | allen  | kevin   | j     |    670 |       7507 | 2017-02-20 | 1600 |  300 |      30 |
+| 7507 | baker  | leslie  | d     |    671 |       7839 | 2015-06-10 | 2200 | NULL |      40 |
+| 7506 | dennis | lynn    | s     |    671 |       7839 | 2015-05-15 | 2750 | NULL |      30 |
+| 7505 | doyle  | jean    | k     |    671 |       7839 | 2015-04-04 | 2850 | NULL |      30 |
+| 7839 | megan  | john    | s     |    672 |       NULL | 2014-12-12 | 5500 | NULL |      30 |
+| 7369 | smith  | john    | q     |    667 |       7521 | 2018-12-17 |  800 | NULL |      20 |
+| 7521 | wark   | cynthia | d     |    670 |       7505 | 2015-02-22 | 1250 |  500 |      30 |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+
+5.How many employees who are working in different departments wise in the organization
+
+ select dept_id,count(eid) from emp group by dept_id;
++---------+------------+
+| dept_id | count(eid) |
++---------+------------+
+|      20 |          1 |
+|      30 |          5 |
+|      40 |          1 |
++---------+------------+
+
+
+6.List out the department wise maximum salary, minimum salary, average salary of the employees
+
+ select dept_id,max(sal),min(sal),avg(sal) from emp group by dept_id;
++---------+----------+----------+-----------+
+| dept_id | max(sal) | min(sal) | avg(sal)  |
++---------+----------+----------+-----------+
+|      20 |      800 |      800 |  800.0000 |
+|      30 |     5500 |     1250 | 2790.0000 |
+|      40 |     2200 |     2200 | 2200.0000 |
++---------+----------+----------+-----------+
+
+7.List out the job wise maximum salary, minimum salary, average salaries of the employees.
+
+ select job_id,max(sal),min(sal),avg(sal) from emp group by job_id;
++--------+----------+----------+-----------+
+| job_id | max(sal) | min(sal) | avg(sal)  |
++--------+----------+----------+-----------+
+|    667 |      800 |      800 |  800.0000 |
+|    670 |     1600 |     1250 | 1425.0000 |
+|    671 |     2850 |     2200 | 2600.0000 |
+|    672 |     5500 |     5500 | 5500.0000 |
++--------+----------+----------+-----------+
+
+
+8.List out the no.of employees joined in every month in ascending order.
+
+SELECT COUNT(eid),hiredate from emp group by month(hiredate) order by count(eid) asc;
++------------+------------+
+| COUNT(eid) | hiredate   |
++------------+------------+
+|          1 | 2015-05-15 |
+|          1 | 2015-06-10 |
+|          1 | 2015-04-04 |
+|          2 | 2018-12-17 |
+|          2 | 2017-02-20 |
++------------+------------+
+
+9.List out the no.of employees for each month and year, in the ascending order based on the year, month.
+SELECT COUNT(eid),hiredate from emp group by month(hiredate) order by month(hiredate) asc,year(hiredate) asc;
++------------+------------+
+| COUNT(eid) | hiredate   |
++------------+------------+
+|          2 | 2017-02-20 |
+|          1 | 2015-04-04 |
+|          1 | 2015-05-15 |
+|          1 | 2015-06-10 |
+|          2 | 2018-12-17 |
++------------+------------+
+
+10.List out the department id having atleast four employees.
+
+MariaDB [lab_4]> select dept_id from emp group by dept_id having count(*) >=4;
++---------+
+| dept_id |
++---------+
+|      30 |
++---------+
+1 row in set (0.000 sec)
+
+MariaDB [lab_4]> select dept_id from emp group by dept_id having count(dept_id) >=4;
++---------+
+| dept_id |
++---------+
+|      30 |
++---------+
+
+
+
+11.How many employees in January month.
+
+ select eid,count(eid) from emp where month(hiredate)='01';
++------+------------+
+| eid  | count(eid) |
++------+------------+
+| 7509 |          1 |
++------+------------+
+
+ select eid,count(eid) from emp where MONTHNAME(hiredate) = MONTHNAME(2015-01-15) group by eid;
+
+
+   select eid,fname,count(eid) from emp where hiredate >='2015-01-00'and hiredate <'2015-02-00' group by hiredate;
++------+-------+------------+
+| eid  | fname | count(eid) |
++------+-------+------------+
+| 7509 | lynn  |          1 |
++------+-------+------------+
+
+12.How many employees who are joined in January or September month.
+13.How many employees who are joined in 1985.
+14.How many employees joined each month in 1985.
+15.How many employees who are joined in March 1985.
+16.Which is the department id, having greater than or equal to 3 employees joined in April 1985.
+
+
+
+
+select to_char(hiredate,'month') as hire_month, count(eid) from emp where hire_month = 'january'group by to_char(hiredate,'month')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MariaDB [lab_4]> select * from location;
++--------+----------------+
+| loc_id | regional_group |
++--------+----------------+
+|    122 | new york       |
+|    123 | dallas         |
+|    124 | chicago        |
+|    167 | boston         |
++--------+----------------+
+4 rows in set (0.002 sec)
+
+MariaDB [lab_4]> select * from dept;
++---------+------------+--------+
+| dept_id | name       | loc_id |
++---------+------------+--------+
+|      10 | accounting |    122 |
+|      20 | research   |    124 |
+|      30 | sales      |    123 |
+|      40 | operations |    167 |
++---------+------------+--------+
+4 rows in set (0.002 sec)
+
+MariaDB [lab_4]> select * from job;
++--------+-------------+
+| job_id | function    |
++--------+-------------+
+|    667 | clerk       |
+|    668 | staff       |
+|    669 | analyst     |
+|    670 | salesperson |
+|    671 | manager     |
+|    672 | president   |
++--------+-------------+
+6 rows in set (0.000 sec)
+
+MariaDB [lab_4]> select * from emp;
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname  | fname   | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| 7369 | smith  | john    | q     |    667 |       7521 | 2018-12-17 |  800 | NULL |      20 |
+| 7499 | allen  | kevin   | j     |    670 |       7507 | 2017-02-20 | 1600 |  300 |      30 |
+| 7505 | doyle  | jean    | k     |    671 |       7839 | 2015-04-04 | 2850 | NULL |      30 |
+| 7506 | dennis | lynn    | s     |    671 |       7839 | 2015-05-15 | 2750 | NULL |      30 |
+| 7507 | baker  | leslie  | d     |    671 |       7839 | 2015-06-10 | 2200 | NULL |      40 |
+| 7521 | wark   | cynthia | d     |    670 |       7505 | 2015-02-22 | 1250 |  500 |      30 |
+| 7839 | megan  | john    | s     |    672 |       NULL | 2014-12-12 | 5500 | NULL |      30 |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+

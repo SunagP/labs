@@ -1,0 +1,473 @@
+
+Setting environment for using XAMPP for Windows.
+Asus@LAPTOP-JQL14L67 c:\xampp
+# mysql -h localhost -u root
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 8
+Server version: 10.4.17-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> show databases
+    -> ;
++--------------------+
+| Database           |
++--------------------+
+| demo.sql           |
+| information_schema |
+| lab                |
+| lab1               |
+| lab3               |
+| lab4               |
+| lab5               |
+| lab_2              |
+| login              |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| sunag              |
+| test               |
++--------------------+
+14 rows in set (0.027 sec)
+
+MariaDB [(none)]> use lab_2;
+Database changed
+MariaDB [lab_2]> select * from part
+    -> ;
++-----+--------+-------+
+| pid | pname  | color |
++-----+--------+-------+
+|   1 | pname1 | red   |
+|   2 | pname2 | green |
+|   3 | pname3 | green |
+|   4 | pname4 | blue  |
++-----+--------+-------+
+4 rows in set (0.031 sec)
+
+MariaDB [lab_2]> select * from supliers;
+ERROR 1146 (42S02): Table 'lab_2.supliers' doesn't exist
+MariaDB [lab_2]> select * from supplier;
++-----+-------+-----------+
+| sid | sname | address   |
++-----+-------+-----------+
+|   1 | name1 | bangalore |
+|   2 | name2 | Mangalore |
+|   3 | name3 | Mangalore |
+|   4 | name4 | Mysore    |
+|   5 | name5 | Bangalore |
++-----+-------+-----------+
+5 rows in set (0.008 sec)
+
+MariaDB [lab_2]> select * from catalog;
++------+------+------+
+| sid  | pid  | cost |
++------+------+------+
+|    1 |    1 | 10.5 |
+|    2 |    1 | 15.5 |
+|    2 |    2 | 18.5 |
+|    3 |    3 | 25.5 |
+|    4 |    3 | 26.5 |
+|    5 |    4 |  9.5 |
+|    1 |    2 | 13.5 |
++------+------+------+
+7 rows in set (0.007 sec)
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" or part.color="green" );
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    2 |
+|    3 |
+|    4 |
+|    1 |
++------+
+6 rows in set (0.004 sec)
+
+MariaDB [lab_2]> select distinct(c.sid) from catalog c , part p where c.pid=p.pid and p.color='red' union select distinct c1.sid from catalog c1 , part p1 where c1.pid = p1.pid and p1.color = 'green';
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    3 |
+|    4 |
++------+
+4 rows in set (0.006 sec)
+
+MariaDB [lab_2]> select distinct catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" or part.color="green" );
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    3 |
+|    4 |
++------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost in (select max(cost) from catalog group by(sid));
++--------+------+
+| pname  | cost |
++--------+------+
+| pname2 | 18.5 |
+| pname2 | 13.5 |
+| pname3 | 25.5 |
+| pname3 | 26.5 |
++--------+------+
+4 rows in set (0.005 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost in (select max(cost) from catalog group by(sid));
++--------+------+
+| pname  | cost |
++--------+------+
+| pname2 | 18.5 |
+| pname2 | 13.5 |
+| pname3 | 25.5 |
+| pname3 | 26.5 |
++--------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost in (select max(cost) from catalog group by(sid));
++--------+------+
+| pname  | cost |
++--------+------+
+| pname2 | 18.5 |
+| pname2 | 13.5 |
+| pname3 | 25.5 |
+| pname3 | 26.5 |
++--------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost in (select max(cost) from catalog group by(sid));
++--------+------+
+| pname  | cost |
++--------+------+
+| pname2 | 18.5 |
+| pname2 | 13.5 |
+| pname3 | 25.5 |
+| pname3 | 26.5 |
++--------+------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_2]>  select part.pname,max(cost) from catalog,part where catalog.pid = part.pid and part.color in('red','green')group by catalog.sid having count(distinct(part.color))=2;
++--------+-----------+
+| pname  | max(cost) |
++--------+-----------+
+| pname2 |      13.5 |
+| pname1 |      18.5 |
++--------+-----------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color ='red' and color= 'green') and cost in (select max(cost) from catalog group by(sid));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') and cost in (select max(cost) from catalog group by(sid))' at line 1
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and (color ='red' and color= 'green') and cost in (select max(cost) from catalog group by(sid));
+Empty set (0.000 sec)
+
+MariaDB [lab_2]> create database lab_3;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [lab_2]> use database lab_3;
+ERROR 1049 (42000): Unknown database 'database'
+MariaDB [lab_2]> use lab_3;
+Database changed
+MariaDB [lab_3]> create table salesman(sid int,name string,comm int,primary key(sid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'comm int,primary key(sid)' at line 1
+MariaDB [lab_3]> create table salesman(sid int,name varchar(20),comm int,primary key(sid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+MariaDB [lab_3]> create table salesman(sid int,name varchar(20),comm int,primary key(sid));
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [lab_3]> create table customer(cid int,cname string,city string,primary key(cid));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'city string,primary key(cid))' at line 1
+MariaDB [lab_3]> create table customer(cid int,cname varchar(20),city varchar(15),primary key(cid));
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [lab_3]> create table orders(ordnum int,pur_amt real,o_date date ,cid int,sid int);
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [lab_3]> alter table orders add constraint c1 foreign key(cid) references customer cid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cid)' at line 1
+MariaDB [lab_3]> alter table orders add constraint c1 foreign key(cid) references customer(cid));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+MariaDB [lab_3]> alter table orders add constraint c1 foreign key(cid) references customer cid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cid)' at line 1
+MariaDB [lab_3]> alter table orders add constraint c1 foreign key(cid) references customer(cid);
+Query OK, 0 rows affected (0.033 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab_3]> alter table orders add constraint c1 foreign key(sid) references supplier(sid);
+ERROR 1061 (42000): Duplicate key name 'c1'
+MariaDB [lab_3]> alter table orders add constraint c2 foreign key(sid) references supplier(sid);
+ERROR 1005 (HY000): Can't create table `lab_3`.`orders` (errno: 150 "Foreign key constraint is incorrectly formed")
+MariaDB [lab_3]> alter table orders add constraint c2 foreign key(sid) references supplier(sid);
+ERROR 1005 (HY000): Can't create table `lab_3`.`orders` (errno: 150 "Foreign key constraint is incorrectly formed")
+MariaDB [lab_3]> insert into customers values(1,'cname1','bangalore');
+ERROR 1146 (42S02): Table 'lab_3.customers' doesn't exist
+MariaDB [lab_3]> insert into customer values(1,'cname1','bangalore');
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_3]> insert into customer values(2,'cname2','bangalore');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into customer values(3,'cname3','mangalore');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into customer values(4,'cname4','mangalore');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into customer values(5,'cname5','mysore');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into salesman values(1,'sname1','mysore',1000);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MariaDB [lab_3]> desc salesman;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| sid   | int(11)     | NO   | PRI | NULL    |       |
+| name  | varchar(20) | YES  |     | NULL    |       |
+| comm  | int(11)     | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.005 sec)
+
+MariaDB [lab_3]> insert into salesman values(1,'sname1',1000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into salesman values(2,'sname2',15000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into salesman values(3,'sname3',5000);
+Query OK, 1 row affected (0.002 sec)
+
+MariaDB [lab_3]> insert into salesman values(4,'sname4',20000);
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_3]> insert into salesman values(5,'sname4',25000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> aletr table orders add constraint c2 foreign key(sid) references salesman(sid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'aletr table orders add constraint c2 foreign key(sid) references salesman(sid)' at line 1
+MariaDB [lab_3]> desc salesman;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| sid   | int(11)     | NO   | PRI | NULL    |       |
+| name  | varchar(20) | YES  |     | NULL    |       |
+| comm  | int(11)     | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.004 sec)
+
+MariaDB [lab_3]> alter table orders add constraint c2 foreign key(sid) references salesman(sid);
+Query OK, 0 rows affected (0.030 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab_3]> insert into orders values(1,15000,"2020-05-01",1,1);
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_3]> insert into orders values(2,25000,"2019-05-01",1,2);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into orders values(3,2500,"2017-05-01",2,2);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into orders values(3,25000,"2021-05-05",2,3);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into orders values(4,35000,"2021-05-05",3,4);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_3]> insert into orders values(5,45000,"2021-05-06",4,5);
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_3]> select * from salesman;
++-----+--------+-------+
+| sid | name   | comm  |
++-----+--------+-------+
+|   1 | sname1 |  1000 |
+|   2 | sname2 | 15000 |
+|   3 | sname3 |  5000 |
+|   4 | sname4 | 20000 |
+|   5 | sname4 | 25000 |
++-----+--------+-------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select * from customer;
++-----+--------+-----------+
+| cid | cname  | city      |
++-----+--------+-----------+
+|   1 | cname1 | bangalore |
+|   2 | cname2 | bangalore |
+|   3 | cname3 | mangalore |
+|   4 | cname4 | mangalore |
+|   5 | cname5 | mysore    |
++-----+--------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select * from orders;
++--------+---------+------------+------+------+
+| ordnum | pur_amt | o_date     | cid  | sid  |
++--------+---------+------------+------+------+
+|      1 |   15000 | 2020-05-01 |    1 |    1 |
+|      2 |   25000 | 2019-05-01 |    1 |    2 |
+|      3 |    2500 | 2017-05-01 |    2 |    2 |
+|      3 |   25000 | 2021-05-05 |    2 |    3 |
+|      4 |   35000 | 2021-05-05 |    3 |    4 |
+|      5 |   45000 | 2021-05-06 |    4 |    5 |
++--------+---------+------------+------+------+
+6 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select cid,cname from customers;
+ERROR 1146 (42S02): Table 'lab_3.customers' doesn't exist
+MariaDB [lab_3]> select cid,cname from customer;
++-----+--------+
+| cid | cname  |
++-----+--------+
+|   1 | cname1 |
+|   2 | cname2 |
+|   3 | cname3 |
+|   4 | cname4 |
+|   5 | cname5 |
++-----+--------+
+5 rows in set (0.001 sec)
+
+MariaDB [lab_3]> alter table salesman add city varchar(15);
+Query OK, 0 rows affected (0.006 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab_3]> update salesman set city =
+    -> "bangalore" where name like "name_"
+    -> ;
+Query OK, 0 rows affected (0.003 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+MariaDB [lab_3]> select * from salesman;
++-----+--------+-------+------+
+| sid | name   | comm  | city |
++-----+--------+-------+------+
+|   1 | sname1 |  1000 | NULL |
+|   2 | sname2 | 15000 | NULL |
+|   3 | sname3 |  5000 | NULL |
+|   4 | sname4 | 20000 | NULL |
+|   5 | sname4 | 25000 | NULL |
++-----+--------+-------+------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab_3]> update salesman set city = "bangalore" where comm > 5000;
+Query OK, 3 rows affected (0.004 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+MariaDB [lab_3]> update salesman set city = "bangalore" where comm < 5000;
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab_3]> update salesman set city = "mangalore" where comm < 5000;
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab_3]> update salesman set city = "mangalore" where comm = 5000;
+Query OK, 1 row affected (0.006 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab_3]> select * from salesman;
++-----+--------+-------+-----------+
+| sid | name   | comm  | city      |
++-----+--------+-------+-----------+
+|   1 | sname1 |  1000 | mangalore |
+|   2 | sname2 | 15000 | bangalore |
+|   3 | sname3 |  5000 | mangalore |
+|   4 | sname4 | 20000 | bangalore |
+|   5 | sname4 | 25000 | bangalore |
++-----+--------+-------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select * from salesman where comm = (select max(comm) from salesman);
++-----+--------+-------+-----------+
+| sid | name   | comm  | city      |
++-----+--------+-------+-----------+
+|   5 | sname4 | 25000 | bangalore |
++-----+--------+-------+-----------+
+1 row in set (0.002 sec)
+
+MariaDB [lab_3]> select * from orders order by pur_amt desc;
++--------+---------+------------+------+------+
+| ordnum | pur_amt | o_date     | cid  | sid  |
++--------+---------+------------+------+------+
+|      5 |   45000 | 2021-05-06 |    4 |    5 |
+|      4 |   35000 | 2021-05-05 |    3 |    4 |
+|      2 |   25000 | 2019-05-01 |    1 |    2 |
+|      3 |   25000 | 2021-05-05 |    2 |    3 |
+|      1 |   15000 | 2020-05-01 |    1 |    1 |
+|      3 |    2500 | 2017-05-01 |    2 |    2 |
++--------+---------+------------+------+------+
+6 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select name,cid from customer,salesman where customer.city = salesmam.city;
+ERROR 1054 (42S22): Unknown column 'salesmam.city' in 'where clause'
+MariaDB [lab_3]> select name,cid from customer,salesman where customer.city = salesman.city;
++--------+-----+
+| name   | cid |
++--------+-----+
+| sname2 |   1 |
+| sname4 |   1 |
+| sname4 |   1 |
+| sname2 |   2 |
+| sname4 |   2 |
+| sname4 |   2 |
+| sname1 |   3 |
+| sname3 |   3 |
+| sname1 |   4 |
+| sname3 |   4 |
++--------+-----+
+10 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select name,cid from customer,salesman where customer.city = salesman.city group by name;
++--------+-----+
+| name   | cid |
++--------+-----+
+| sname1 |   3 |
+| sname2 |   1 |
+| sname3 |   3 |
+| sname4 |   1 |
++--------+-----+
+4 rows in set (0.001 sec)
+
+MariaDB [lab_3]> select name,cid,city from customer,salesman where customer.city = salesman.city group by name;
+ERROR 1052 (23000): Column 'city' in field list is ambiguous
+MariaDB [lab_3]> select name,cid,customer.city from customer,salesman where customer.city = salesman.city group by name;
++--------+-----+-----------+
+| name   | cid | city      |
++--------+-----+-----------+
+| sname1 |   3 | mangalore |
+| sname2 |   1 | bangalore |
+| sname3 |   3 | mangalore |
+| sname4 |   1 | bangalore |
++--------+-----+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select cname,cid,customer.city from customer,salesman where customer.city = salesman.city group by name;
++--------+-----+-----------+
+| cname  | cid | city      |
++--------+-----+-----------+
+| cname3 |   3 | mangalore |
+| cname1 |   1 | bangalore |
+| cname3 |   3 | mangalore |
+| cname1 |   1 | bangalore |
++--------+-----+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_3]> select cname,cid,customer.city from customer,salesman where customer.city = salesman.city group by  cname;
++--------+-----+-----------+
+| cname  | cid | city      |
++--------+-----+-----------+
+| cname1 |   1 | bangalore |
+| cname2 |   2 | bangalore |
+| cname3 |   3 | mangalore |
+| cname4 |   4 | mangalore |
++--------+-----+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_3]>  select part.pname,max(cost) from catalog,part where catalog.pid = part.pid and part.color in('red','green')group by catalog.sid having count(distinct(part.color))=2; select part.pname,max(cost) from catalog,part where catalog.pid = part.pid and part.color in('red','green')group by catalog.sid having count(distinct(part.color))=2;

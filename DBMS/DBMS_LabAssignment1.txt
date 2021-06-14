@@ -1,0 +1,158 @@
+LAB-1
+
+
+MariaDB [lab4]> select * from sailor;
++-----+------------+--------+------+
+| sid | sailorname | rating | age  |
++-----+------------+--------+------+
+|   1 | ram        |      6 |   25 |
+|   2 | shyam      |      7 |   26 |
+|   3 | raj        |      8 |   26 |
+|   4 | raju       |      8 |   28 |
+|   5 | ravi       |      8 |   27 |
++-----+------------+--------+------+
+
+
+MariaDB [lab4]> select * from boat;
++-----+-------+-------+
+| bid | bname | color |
++-----+-------+-------+
+|   1 | boat2 | blue  |
+|   2 | boat1 | red   |
+|   3 | boat3 | blue  |
+|   4 | boat4 | red   |
+|   5 | boat5 | green |
++-----+-------+-------+
+
+
+MariaDB [lab4]> select * from reserves;
++------+------+------------+
+| sid  | bid  | day        |
++------+------+------------+
+|    1 |    1 | 2021-05-10 |
+|    1 |    2 | 2021-05-10 |
+|    2 |    2 | 2021-05-11 |
+|    3 |    3 | 2021-05-13 |
+|    4 |    3 | 2021-05-13 |
+|    4 |    2 | 2021-05-13 |
+|    5 |    4 | 2021-05-13 |
++------+------+------------+
+
+
+
+3)Select names and ages of all sailors. Rename sname as ‘Sailor Name’
+
+    select sname,age from sailor;
+    alter table sailor change sname sailorName varchar(20);
+
+4)Find all sailors with a rating above 7?
+
+MariaDB [lab4]> select * from sailor where rating > 7;
++-----+------------+--------+------+
+| sid | sailorname | rating | age  |
++-----+------------+--------+------+
+|   3 | raj        |      8 |   26 |
+|   4 | raju       |      8 |   28 |
+|   5 | ravi       |      8 |   27 |
++-----+------------+--------+------+
+
+5) Find the sid of sailors who have reserved a red boat?
+
+MariaDB [lab4]> select sailor.sid from sailor,boat,reserves where sailor.sid = reserves.sid and reserves.bid = boat.bid and boat.color ="red";
++-----+
+| sid |
++-----+
+|   1 |
+|   2 |
+|   4 |
+|   5 |
++-----+
+
+
+6) Find the colors of boats reserved by ‘Shyam’?
+
+MariaDB [lab4]> select boat.color from boat,sailor,reserves 
+where sailor.sailorname = "shyam" and sailor.sid = reserves.sid and reserves.bid = boat.bid;
++-------+
+| color |
++-------+
+| red   |
++-------+
+
+7) Delete all boats which have never been reserved.
+MariaDB [lab4]> delete from boat where bid not in (select bid from reserves);
+
+MariaDB [lab4]> select * from boat;
++-----+-------+-------+
+| bid | bname | color |
++-----+-------+-------+
+|   1 | boat2 | blue  |
+|   2 | boat1 | red   |
+|   3 | boat3 | blue  |
+|   4 | boat4 | red   |
++-----+-------+-------+
+
+
+8)Find the names of sailors who have reserved boat number 1?
+
+select sailor.sailorname from sailor,reserves where sailor.sid = reserves.sid and bid = 1;
++------------+
+| sailorname |
++------------+
+| ram        |
++------------+
+
+9) Find the names of sailors who have reserved a red boat?
+MariaDB [lab4]> select sailor.sailorname from sailor,boat,reserves where sailor.sid = reserves.sid and reserves.bid = boat.bid and boat.color ="red";
++------------+
+| sailorname |
++------------+
+| ram        |
+| shyam      |
+| raju       |
+| ravi       |
++------------+
+
+10)Find the names of sailors who have reserved atleast one boat?
+
+MariaDB [lab4]> select sailorname from sailor where sid in (select sid from reserves);
++------------+
+| sailorname |
++------------+
+| ram        |
+| shyam      |
+| raj        |
+| raju       |
+| ravi       |
++------------+
+
+
+
+11)Find the name and age of sailors whose name begins and ends with B and has atleast
+3 characters?
+MariaDB [lab4]> select sailorname , age from sailor where sailorname like"b_%b";
++------------+------+
+| sailorname | age  |
++------------+------+
+| bob        |   29 |
++------------+------+
+
+12)Find the name and age of oldest sailor
+MariaDB [lab4]> select sailorname,age from sailor where age =(select max(age) from sailor);
++------------+------+
+| sailorname | age  |
++------------+------+
+| bob        |   29 |
++------------+------+
+
+
+13)Find the names of sailors who have reserved a red boat, and list in the order of age.
+MariaDB [lab4]> select sailor.sailorname from sailor,boat,reserves where sailor.sid = reserves.sid and reserves.bid = boat.bid and boat.color ="red" order by sailor.age;
++------------+
+| sailorname |
++------------+
+| ram        |
+| shyam      |
+| ravi       |
+| raju       |
++------------+

@@ -1,0 +1,256 @@
+Assignment 1
+
+2) Write the following constraints for attributes of the relation:
+  Movie(title, year, length, incolor, studioName, producerC#)
+i. The year cannot be before 1895.
+ii. The studio name can only be Disney, Fox, AIGlI, or Paramount.
+
+MariaDB [sunag]> create table movies(
+    -> title varchar(15),
+    -> year int check(year>1985),
+    -> length int,
+    -> genere varchar(15),
+    -> studioname varchar(15) check(studioname in('disney','fox','AIG1I','paramount')),
+    -> producerC int)
+    -> ;
+Query OK, 0 rows affected (0.038 sec)
+
+
+MariaDB [sunag]> desc movies
+    -> ;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| title      | varchar(15) | YES  |     | NULL    |       |
+| year       | int(11)     | YES  |     | NULL    |       |
+| length     | int(11)     | YES  |     | NULL    |       |
+| genere     | varchar(15) | YES  |     | NULL    |       |
+| studioname | varchar(15) | YES  |     | NULL    |       |
+| producerC  | int(11)     | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+
+
+MariaDB [sunag]> select * from movies;
++------------+------+--------+----------+------------+-----------+
+| title      | year | length | genere   | studioname | producerC |
++------------+------+--------+----------+------------+-----------+
+| new movie  | 1986 |     15 | horror   | disney     |         1 |
+| new movie2 | 1988 |     16 | thriller | fox        |         2 |
++------------+------+--------+----------+------------+-----------+
+
+
+2)ENROL (ENo, C_Id, Class) - ENo represents student number
+  TEACH (Prof, C_Id, Class) – C_Id represents course number
+  ADVISE (Prof, ENo) - Prof is project guide of ENo (Student’s enrol_no)
+  PRE_REQ (C_Id, Pre_C_Id) - Pre_C_Id is prerequisite course
+  GRADES (ENo, C_Id, Grade, Year)
+
+ STUDENT (ENo, SName) - SName is student name
+Consider the relational schema given and represent the following in SQL :
+i. Create the table with appropriate primary keys and foreign keys
+ii. List all students whose project guide is Prof.Murthy.
+iii. List the grade for the student with ENo=1234
+iv. List all the student names and ENo’s who got Grade A in the year 2018 in C_Id= 100.
+v. List all the students who has taken the pre-requisite course Pre_C_Id= 001.
+
+i)
+
+MariaDB [sunag]> create table enrol(
+    -> ENo int,
+    -> C_Id int,
+    -> class int,primary key(C_Id));
+
+ create table teach(
+    -> prof varchar(20),
+    -> C_Id int,
+    -> class int,foreign key(C_Id) references enrol(C_Id));
+
+MariaDB [sunag]> create table student(
+    -> ENo int primary key,
+       name varchar(20));
+
+
+alter table enrol
+    -> add foreign key(ENo) references students(Eno);
+
+ create table pre_req(
+    -> C_Id int,
+    -> pre_c_Id int primary key,
+    -> foreign key(C_Id) references enrol(C_Id));
+
+ alter table teach
+    -> add primary key(prof);
+
+ create table advise(
+    -> prof varchar(20) ,
+    -> ENo int primary key,
+    -> foreign key(prof) references teach(prof));
+
+
+MariaDB [sunag]> create table grades(
+    -> ENo int,
+    -> C_Id int,
+    -> grade varchar(2),
+    -> year int,
+    -> foreign key(ENo) references students(Eno));
+
+
+ 
+MariaDB [sunag]> select * from enrol;
++------+------+-------+
+| ENo  | C_Id | class |
++------+------+-------+
+|    1 |    1 |     1 |
+|    2 |    2 |     2 |
+|    3 |    3 |     1 |
+|    4 |    4 |     2 |
+| 1234 |    5 |     2 |
+| 1234 |    6 |     2 |
++------+------+-------+
+6 rows in set (0.001 sec)
+
+MariaDB [sunag]> select * from teach;
++--------+------+-------+
+| prof   | C_Id | class |
++--------+------+-------+
+| Murthy |    2 |     2 |
++--------+------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [sunag]> select * from student;
++------+-------+------+
+| id   | name  | age  |
++------+-------+------+
+|   10 | sunag |   21 |
+|   15 | NULL  |   21 |
++------+-------+------+
+2 rows in set (0.012 sec)
+
+MariaDB [sunag]> select * from pre_req;
++------+----------+
+| C_Id | pre_c_Id |
++------+----------+
+|    1 |        1 |
+|    1 |        3 |
+|    2 |        2 |
+|    2 |        4 |
++------+----------+
+4 rows in set (0.001 sec)
+
+MariaDB [sunag]> select * from advise;
++--------+-----+
+| prof   | ENo |
++--------+-----+
+| Murthy |   1 |
+| Murthy |   2 |
++--------+-----+
+2 rows in set (0.001 sec)
+
+MariaDB [sunag]> select * from grades;
++------+------+-------+------+
+| ENo  | C_Id | grade | year |
++------+------+-------+------+
+| 1234 |    1 | A     | 2020 |
+| 1234 |  100 | A     | 2020 |
++------+------+-------+------+
+
+ii)
+
+MariaDB [sunag]>  SELECT STUDENtS.ENo, Name FROM STUDENTS, ADVISE WHERE STUDENTS.ENo=ADVISE.ENo AND Prof='Murthy';
++-----+------+
+| ENo | Name |
++-----+------+
+|   1 | name |
+|   2 | name |
++-----+------+
+
+iii)
+
+MariaDB [sunag]> SELECT C_Id, Grade FROM GRADES WHERE ENo=1234;
++------+-------+
+| C_Id | Grade |
++------+-------+
+|    1 | A     |
+|  100 | A     |
++------+-------+
+
+iv)
+
+MariaDB [sunag]> SELECT STUDENTS.ENo, Name FROM STUDENTS, GRADES WHERE STUDENTS.ENo=GRADES.ENo AND Grade='A' AND Year=2020 AND C_Id=100;
++------+------+
+| ENo  | Name |
++------+------+
+| 1234 | sun  |
++------+------+
+
+
+v)
+
+
+MariaDB [sunag]>  SELECT STUDENTS.ENo, Name FROM STUDENTS, ENROL, PRE_REQ WHERE STUDENTS.ENo=ENROL.ENo AND ENROL.C_Id=PRE_REQ.C_Id AND Pre_C_Id=1;
++-----+------+
+| ENo | Name |
++-----+------+
+|   1 | name |
++-----+------+
+
+
+4)  EMPLOYEE (eid, employee name, street, city)
+ WORKS (eid, cid, company name, salary)
+ COMPANY (cid, company name, city)
+ MANAGES (eid, manager name)
+Consider the relational schema given and represent the following in SQL :
+i. Create the table with appropriate primary keys and foreign keys
+ii. Find the names and cities of residence of all employees who work for First Bank Corporation.
+iii. Find all employees in the database who do not work for First Bank Corporation[assume: that all
+people work for exactly one company]
+iv. Modify the database so that Jones now lives in Newtown
+v. Display the employees company name which starts with ‘A’ and ends with ‘x’;
+
+MariaDB [sunag]> create table works(id int,cid int,company_name char(5),salary int,constraint c1 foreign key(id) references employee(id));
+
+MariaDB [sunag]> create table company(cid int,company_name char(5),city varchar(10),primary key(cid));
+
+MariaDB [sunag]> create table company(cid int,company_name char(5),city varchar(10),primary key(cid));
+
+MariaDB [sunag]> create table manager(id int,manager_name char(10),add constraint c2  foreign key(id) references employee(id));
+
+
+MariaDB [sunag]> select * from employee;
++----+-----------+-----------+
+| id | name      | city      |
++----+-----------+-----------+
+|  1 | dhoni     | ranchi    |
+|  2 | jadeja    | jamnagar  |
+|  3 | k l rahul | bengaluru |
++----+-----------+-----------+
+3 rows in set (0.001 sec)
+
+MariaDB [sunag]> select * from works;
++------+------+--------------+--------+
+| id   | cid  | company_name | salary |
++------+------+--------------+--------+
+|    1 |    1 | csk          | 900000 |
+|    2 |    1 | csk          | 800000 |
+|    3 |    2 | pkbs         | 700000 |
++------+------+--------------+--------+
+3 rows in set (0.005 sec)
+
+MariaDB [sunag]> select * from company;
++-----+--------------+---------+
+| cid | company_name | city    |
++-----+--------------+---------+
+|   1 | csk          | chennai |
+|   2 | pkbs         | punjab  |
++-----+--------------+---------+
+2 rows in set (0.001 sec)
+
+MariaDB [sunag]> select * from manager;
++------+--------------+
+| id   | manager_name |
++------+--------------+
+|    2 | man1         |
+|    3 | man2         |
++------+--------------+
+

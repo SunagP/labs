@@ -1,0 +1,324 @@
+1)
+
+
+MariaDB [(none)]> create database lab5;
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [(none)]> use lab5;
+Database changed
+MariaDB [lab5]> create table t1(a varchar(4),b int,c varchar(4),d int ,e varchar(4),f int,primary key(c));
+Query OK, 0 rows affected (0.016 sec)
+
+MariaDB [lab5]> insert into t1 values('&a',&b,'&c',&d,'&e',&f);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '&b,'&c',&d,'&e',&f)' at line 1
+MariaDB [lab5]> create table t2(g varchar(4),hf int ,hc varchar(4),k int,constraint c1 primary key(hf));
+Query OK, 0 rows affected, 1 warning (0.010 sec)
+
+MariaDB [lab5]> create table t3(l varchar(4),kf int,hc varchar(4),kk int constraint c2 primary key(kk));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'constraint c2 primary key(kk))' at line 1
+MariaDB [lab5]> create table t3(l varchar(4),kf int,hc varchar(4),kk int, constraint c2 primary key(kk));
+Query OK, 0 rows affected, 1 warning (0.012 sec)
+
+MariaDB [lab5]> alter table t2 add constraint f1 foreign key(hc) references t1(c);
+Query OK, 0 rows affected (0.032 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab5]> alter table t1 add constraint f2 foreign key(f) references t2(hf);
+Query OK, 0 rows affected (0.028 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab5]> alter table t3 add constraint f3 foreign key(kf) references t2(hf);
+Query OK, 0 rows affected (0.026 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab5]> alter table t2 add constraint f4 foreign key(k) references t3(kk);
+Query OK, 0 rows affected (0.027 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab5]> desc t1;
++-------+------------+------+-----+---------+-------+
+| Field | Type       | Null | Key | Default | Extra |
++-------+------------+------+-----+---------+-------+
+| a     | varchar(4) | YES  |     | NULL    |       |
+| b     | int(11)    | YES  |     | NULL    |       |
+| c     | varchar(4) | NO   | PRI | NULL    |       |
+| d     | int(11)    | YES  |     | NULL    |       |
+| e     | varchar(4) | YES  |     | NULL    |       |
+| f     | int(11)    | YES  | MUL | NULL    |       |
++-------+------------+------+-----+---------+-------+
+6 rows in set (0.008 sec)
+
+MariaDB [lab5]> desc t2;
++-------+------------+------+-----+---------+-------+
+| Field | Type       | Null | Key | Default | Extra |
++-------+------------+------+-----+---------+-------+
+| g     | varchar(4) | YES  |     | NULL    |       |
+| hf    | int(11)    | NO   | PRI | NULL    |       |
+| hc    | varchar(4) | YES  | MUL | NULL    |       |
+| k     | int(11)    | YES  | MUL | NULL    |       |
++-------+------------+------+-----+---------+-------+
+4 rows in set (0.005 sec)
+
+MariaDB [lab5]> desc t3;
++-------+------------+------+-----+---------+-------+
+| Field | Type       | Null | Key | Default | Extra |
++-------+------------+------+-----+---------+-------+
+| l     | varchar(4) | YES  |     | NULL    |       |
+| kf    | int(11)    | YES  | MUL | NULL    |       |
+| hc    | varchar(4) | YES  |     | NULL    |       |
+| kk    | int(11)    | NO   | PRI | NULL    |       |
++-------+------------+------+-----+---------+-------+
+4 rows in set (0.005 sec)
+
+MariaDB [lab5]>
+
+3)
+
+MariaDB [lab5]> create table product(pid int ,name varchar(10),descp varchar(20),price int ,color int);
+Query OK, 0 rows affected (0.009 sec)
+
+MariaDB [lab5]> insert into product values(101,"printer","inkjet 300",120,80);
+Query OK, 1 row affected (0.028 sec)
+
+MariaDB [lab5]> insert into product values(102,"printer","inkjet 1220",200,130);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> insert into product values(103,"printer","inkjet 890",250,200);
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [lab5]> insert into product values(104,"printer","inkjet 890",300,270);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> select sum(price) from product;
++------------+
+| sum(price) |
++------------+
+|        870 |
++------------+
+1 row in set (0.004 sec)
+
+MariaDB [lab5]> select sum(price) as total from product;
++-------+
+| total |
++-------+
+|   870 |
++-------+
+1 row in set (0.002 sec)
+
+MariaDB [lab5]> select avg(price) as average from product;
++----------+
+| average  |
++----------+
+| 217.5000 |
++----------+
+1 row in set (0.000 sec)
+
+MariaDB [lab5]> select max(price) as maximun from product;
++---------+
+| maximun |
++---------+
+|     300 |
++---------+
+1 row in set (0.002 sec)
+
+MariaDB [lab5]>
+
+
+4)
+
+ create table emp(eno int ,ename varchar(10),job varchar(6),dno int,sal int,primary key(eno));
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [lab5]> create table dept(dno int,dname varchar(10),loc varchar(10),primary key(dno));
+Query OK, 0 rows affected (0.009 sec)
+
+MariaDB [lab5]> alter table emp add constraint f1 foreign key(dno) references dept(dno);
+ERROR 1005 (HY000): Can't create table `lab5`.`emp` (errno: 121 "Duplicate key on write or update")
+MariaDB [lab5]> select * from emp;
+Empty set (0.002 sec)
+
+MariaDB [lab5]> alter table emp add constraint f1 foreign key(dno) references dept(dno);
+ERROR 1005 (HY000): Can't create table `lab5`.`emp` (errno: 121 "Duplicate key on write or update")
+MariaDB [lab5]> show tables;
++----------------+
+| Tables_in_lab5 |
++----------------+
+| dept           |
+| emp            |
+| product        |
+| t1             |
+| t2             |
+| t3             |
++----------------+
+6 rows in set (0.002 sec)
+
+MariaDB [lab5]> alter table emp add constraint f foreign key(dno) references dept(dno);
+Query OK, 0 rows affected (0.024 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab5]> insert into dept values(1,"accnt","new york");
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab5]> insert into dept values(2,"research","dallas");
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> insert into dept values(30,"sales","chicago");
+Query OK, 1 row affected (0.002 sec)
+
+MariaDB [lab5]> insert into dept values(40,"operation","boston");
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [lab5]> insert into emp values(1,"amthi","ap",1,30000);
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab5]> insert into emp values(2,"arjun","asp",2,32000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> insert into emp values(3,"gugan","asp",2,40000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> insert into emp values(4,"karthik","ap",1,35000);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab5]> select eno,ename,sal,danme,loc from emp,dept where emp.eno=dept.dno;
+ERROR 1054 (42S22): Unknown column 'danme' in 'field list'
+MariaDB [lab5]> select eno,ename,sal,dname,loc from emp,dept where emp.eno=dept.dno;
++-----+-------+-------+----------+----------+
+| eno | ename | sal   | dname    | loc      |
++-----+-------+-------+----------+----------+
+|   1 | amthi | 30000 | accnt    | new york |
+|   2 | arjun | 32000 | research | dallas   |
++-----+-------+-------+----------+----------+
+2 rows in set (0.005 sec)
+
+MariaDB [lab5]> select ename,sal,loc from emp,dept where dept.dno in(2,30,40);
++---------+-------+---------+
+| ename   | sal   | loc     |
++---------+-------+---------+
+| amthi   | 30000 | dallas  |
+| amthi   | 30000 | chicago |
+| amthi   | 30000 | boston  |
+| arjun   | 32000 | dallas  |
+| arjun   | 32000 | chicago |
+| arjun   | 32000 | boston  |
+| gugan   | 40000 | dallas  |
+| gugan   | 40000 | chicago |
+| gugan   | 40000 | boston  |
+| karthik | 35000 | dallas  |
+| karthik | 35000 | chicago |
+| karthik | 35000 | boston  |
++---------+-------+---------+
+12 rows in set (0.003 sec)
+
+MariaDB [lab5]> select ename,sal,loc from emp,dept where dept.dno in(2,30,40)and emp.dno=dept.dno;
++-------+-------+--------+
+| ename | sal   | loc    |
++-------+-------+--------+
+| arjun | 32000 | dallas |
+| gugan | 40000 | dallas |
++-------+-------+--------+
+2 rows in set (0.002 sec)
+
+MariaDB [lab5]> select count(distinct job) from emp;
++---------------------+
+| count(distinct job) |
++---------------------+
+|                   2 |
++---------------------+
+1 row in set (0.002 sec)
+
+MariaDB [lab5]> select ename from emp where sal >(select ename.karthik.sal);
+ERROR 1054 (42S22): Unknown column 'ename.karthik.sal' in 'field list'
+MariaDB [lab5]> select ename from emp where sal >(select sal from emp where ename = "karthik");
++-------+
+| ename |
++-------+
+| gugan |
++-------+
+1 row in set (0.003 sec)
+
+MariaDB [lab5]> select dno from emp having count(dno)<3;
+Empty set (0.000 sec)
+
+MariaDB [lab5]> select dno from emp group by dno having count(*)<3;
++------+
+| dno  |
++------+
+|    1 |
+|    2 |
++------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab5]> select ename from emp group by dno having count(*)<3;
++-------+
+| ename |
++-------+
+| amthi |
+| arjun |
++-------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab5]> select ename from emp where dno = (select dno from emp group by dno having count(*)<3);
+ERROR 1242 (21000): Subquery returns more than 1 row
+MariaDB [lab5]> select ename from emp where dno in (select dno from emp group by dno having count(*)<3);
++---------+
+| ename   |
++---------+
+| amthi   |
+| arjun   |
+| gugan   |
+| karthik |
++---------+
+4 rows in set (0.002 sec)
+
+MariaDB [lab5]> select max(sal) from emp where dno = (select dno from emp order by dno);
+ERROR 1242 (21000): Subquery returns more than 1 row
+MariaDB [lab5]> select max(sal) from emp where dno is (select dno from emp order by dno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select dno from emp order by dno)' at line 1
+MariaDB [lab5]> select sal from emp where dno is (select dno from emp order by dno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select dno from emp order by dno)' at line 1
+MariaDB [lab5]> select max(sal) from emp where dno is (select distinct dno from emp order by dno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select distinct dno from emp order by dno)' at line 1
+MariaDB [lab5]> select max(sal) from emp where dno is (select dno from emp order by distinct(dno));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select dno from emp order by distinct(dno))' at line 1
+MariaDB [lab5]> select max(sal) from emp having dno = (select dno from emp order by distinct(dno));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'distinct(dno))' at line 1
+MariaDB [lab5]> select max(sal) from emp where dno = (select distinct dno from emp);
+ERROR 1242 (21000): Subquery returns more than 1 row
+MariaDB [lab5]> select max(sal) from emp where dno is (select distinct dno from emp);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select distinct dno from emp)' at line 1
+MariaDB [lab5]> select max(sal) from emp group by dno;
++----------+
+| max(sal) |
++----------+
+|    35000 |
+|    40000 |
++----------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab5]> select sal , ename from emp where sal =(select max(sal) from emp group by dno);
+ERROR 1242 (21000): Subquery returns more than 1 row
+MariaDB [lab5]> select sal , ename from emp where sal is (select max(sal) from emp group by dno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(select max(sal) from emp group by dno)' at line 1
+MariaDB [lab5]> select max(sal),name from emp group by dno;
+ERROR 1054 (42S22): Unknown column 'name' in 'field list'
+MariaDB [lab5]> select max(sal),ename from emp group by dno;
++----------+-------+
+| max(sal) | ename |
++----------+-------+
+|    35000 | amthi |
+|    40000 | arjun |
++----------+-------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab5]> select sal , ename from emp where sal in (select max(sal) from emp group by dno);
++-------+---------+
+| sal   | ename   |
++-------+---------+
+| 40000 | gugan   |
+| 35000 | karthik |
++-------+---------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab5]>
+

@@ -1,0 +1,294 @@
+2: Create tables for the following schema:
+SUPPLIER(sid:integer, sname: string, address: string)
+PART(pid:integer, pname: string, color: string)
+CATALOG(sid:integer, pid: integer, cost: real)
+
+Mandatory Queries:
+1) Add the required constraints on the created tables.
+2) Populate the relations with at least 5 tuples each.
+3) Select the ID and names of all the suppliers.
+4) Select the most costly part available in the catalog.
+5) Find the pnames of parts for which there is some supplier.
+
+6) Find the sids of suppliers who supply a red part and a green part.
+7) Delete all parts of a given ID.
+Vandit Agarwal10:00 AM
+select sid from supplier where sid=(select sid from catalog where pid=(select pid from part where color='red'or color='green' ));
+Varun N10:02 AM
+select sid from catalog,part where part.pid=catalog.pid and color='green' and color='red';
+
+SELECT part.pid FROM part WHERE color = 'green' AND color = 'red';
+
+
+SELECT C1.sid FROM Catalog C1, Parts P1 WHERE C1.pid = P1.pid AND P1.color = ‘Green’
+1) Find the sids of suppliers who supply a red part or a green part.
+2) List the suppliers residing in Bangalore.
+Sindhu K10:32 AM
+3) For every supplier that supplies a green part and a red part, print the name and price of the most expensive part that he/she supplies.
+
+select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost = (select max(cost) from catalog group by(sid));
+
+
+
+
+MariaDB [(none)]> use lab_2;
+Database changed
+MariaDB [lab_2]> create table supplier(sid int,sname varchar(20),address varchar(20),primary key(sid));
+Query OK, 0 rows affected (0.009 sec)
+
+
+MariaDB [lab_2]> create table part(pid int primary key,pname varchar(15),color varchar(10));
+Query OK, 0 rows affected (0.010 sec)
+
+
+MariaDB [lab_2]> create table catalog(sid int,pid int,cost real);
+Query OK, 0 rows affected (0.012 sec)
+
+MariaDB [lab_2]> insert into supplier values(1,"name1","bangalore");
+Query OK, 1 row affected (0.031 sec)
+
+MariaDB [lab_2]> insert into supplier values(2,"name2","Mangalore");
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into supplier values(3,"name3","Mangalore");
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into supplier values(4,"name4","Mysore");
+Query OK, 1 row affected (0.006 sec)
+
+MariaDB [lab_2]> insert into supplier values(5,"name5","Bangalore");
+Query OK, 1 row affected (0.006 sec)
+
+MariaDB [lab_2]> insert into part values(1,"pname1","red");
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_2]> insert into part values(2,"pname2","green");
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into part values(3,"pname3","green");
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [lab_2]> insert into part values(4,"pname4","blue");
+Query OK, 1 row affected (0.006 sec)
+
+MariaDB [lab_2]> insert into part values(5,"pname5","black");
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> alter table catalog add constraint c1 foreign key(sid) references supplier(sid);
+Query OK, 0 rows affected (0.032 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab_2]> alter table catalog add constraint c2 foreign key(pid) references part(pid);
+Query OK, 0 rows affected (0.033 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab_2]> insert into catalog values(1,1,10.5);
+Query OK, 1 row affected (0.005 sec)
+
+MariaDB [lab_2]> insert into catalog values(2,1,15.5);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into catalog values(2,2,18.5);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into catalog values(3,3,25.5);
+Query OK, 1 row affected (0.006 sec)
+
+MariaDB [lab_2]> insert into catalog values(4,3,26.5);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> insert into catalog values(5,4,9.5);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> select * from supplier;
++-----+-------+-----------+
+| sid | sname | address   |
++-----+-------+-----------+
+|   1 | name1 | bangalore |
+|   2 | name2 | Mangalore |
+|   3 | name3 | Mangalore |
+|   4 | name4 | Mysore    |
+|   5 | name5 | Bangalore |
++-----+-------+-----------+
+5 rows in set (0.004 sec)
+
+MariaDB [lab_2]> select * from part;
++-----+--------+-------+
+| pid | pname  | color |
++-----+--------+-------+
+|   1 | pname1 | red   |
+|   2 | pname2 | green |
+|   3 | pname3 | green |
+|   4 | pname4 | blue  |
+|   5 | pname5 | black |
++-----+--------+-------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab_2]> select * from catalog;
++------+------+------+
+| sid  | pid  | cost |
++------+------+------+
+|    1 |    1 | 10.5 |
+|    2 |    1 | 15.5 |
+|    2 |    2 | 18.5 |
+|    3 |    3 | 25.5 |
+|    4 |    3 | 26.5 |
+|    5 |    4 |  9.5 |
++------+------+------+
+6 rows in set (0.000 sec)
+
+
+3) Select the ID and names of all the suppliers.
+MariaDB [lab_2]> select sid,sname from supplier;
++-----+-------+
+| sid | sname |
++-----+-------+
+|   1 | name1 |
+|   2 | name2 |
+|   3 | name3 |
+|   4 | name4 |
+|   5 | name5 |
++-----+-------+
+5 rows in set (0.001 sec)
+
+
+4) Select the most costly part available in the catalog.
+
+MariaDB [lab_2]> select sid,pid,cost from catalog where cost =(select max(cost) from catalog);
++------+------+------+
+| sid  | pid  | cost |
++------+------+------+
+|    4 |    3 | 26.5 |
++------+------+------+
+1 row in set (0.005 sec)
+
+
+
+5) Find the pnames of parts for which there is some supplier.
+
+
+
+MariaDB [lab_2]> select pname from part,catalog where part.pid=catalog.pid group by catalog.pid;
++--------+
+| pname  |
++--------+
+| pname1 |
+| pname2 |
+| pname3 |
+| pname4 |
++--------+
+4 rows in set (0.002 sec)
+
+
+MariaDB [lab_2]> select supplier.sid from supplier,part,catalog where supplier.sid=catalog.sid and part.pid=catalog.pid and (part.color="red" and part.color="green");
+Empty set (0.000 sec)
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" and part.color="green");
+Empty set (0.000 sec)
+
+MariaDB [lab_2]> insert into catalog values(1,2,13.5);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" and part.color="green");
+Empty set (0.000 sec)
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" );
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
++------+
+2 rows in set (0.003 sec)
+
+
+MariaDB [lab_2]> delete from part where pid=5;
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" or part.color="green");
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    2 |
+|    3 |
+|    4 |
+|    1 |
++------+
+6 rows in set (0.000 sec)
+
+
+
+MariaDB [lab_2]> select catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" or part.color="green");
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    2 |
+|    3 |
+|    4 |
+|    1 |
++------+
+6 rows in set (0.000 sec)
+
+
+MariaDB [lab_2]> select distinct catalog.sid from catalog,part where part.pid=catalog.pid and (part.color="red" or part.color="green");
++------+
+| sid  |
++------+
+|    1 |
+|    2 |
+|    3 |
+|    4 |
++------+
+4 rows in set (0.003 sec)
+
+MariaDB [lab_2]> select * from part;
++-----+--------+-------+
+| pid | pname  | color |
++-----+--------+-------+
+|   1 | pname1 | red   |
+|   2 | pname2 | green |
+|   3 | pname3 | green |
+|   4 | pname4 | blue  |
++-----+--------+-------+
+4 rows in set (0.000 sec)
+
+MariaDB [lab_2]> select * from catalog;
++------+------+------+
+| sid  | pid  | cost |
++------+------+------+
+|    1 |    1 | 10.5 |
+|    2 |    1 | 15.5 |
+|    2 |    2 | 18.5 |
+|    3 |    3 | 25.5 |
+|    4 |    3 | 26.5 |
+|    5 |    4 |  9.5 |
+|    1 |    2 | 13.5 |
++------+------+------+
+7 rows in set (0.000 sec)
+
+
+MariaDB [lab_2]> select * from supplier where address = "bangalore";
++-----+-------+-----------+
+| sid | sname | address   |
++-----+-------+-----------+
+|   1 | name1 | bangalore |
+|   5 | name5 | Bangalore |
++-----+-------+-----------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab_2]> select pname, cost from catalog, part where catalog.pid = part.pid and color in('red', 'green') and cost in (select max(cost) from catalog group by(sid));
++--------+------+
+| pname  | cost |
++--------+------+
+| pname2 | 18.5 |
+| pname2 | 13.5 |
+| pname3 | 25.5 |
+| pname3 | 26.5 |
++--------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [lab_2]>

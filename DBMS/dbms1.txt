@@ -1,0 +1,115 @@
+MariaDB [emp]> create database employee;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [emp]> use employee;
+Database changed
+MariaDB [employee]> create table employee_(id int,name char(20),city char(25));
+Query OK, 0 rows affected (0.268 sec)
+
+MariaDB [employee]> alter table employee_ add primary key(id);
+Query OK, 0 rows affected (0.725 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> insert into employee_(id,name,city) values(1,"manish pandey","bengaluru"),(2,"virat kohli","delhi");
+Query OK, 2 rows affected (0.398 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> insert into employee_(id,name,city) values(3,"ms dhoni","ranchi"),(4,"rohit sharma","mumbai");
+Query OK, 2 rows affected (0.393 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+
+MariaDB [employee]> create table works(id int,cid int,company_name char(5),salary int);
+Query OK, 0 rows affected (0.552 sec)
+
+MariaDB [employee]> insert into works(id,cid,company_name,salary) values(3,1,"csk",80000000),(2,2,"rcb",100000000);
+Query OK, 2 rows affected (0.413 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> insert into works(id,cid,company_name,salary) values(1,3,"srh",40000000),(4,4,"mi",80000000);
+Query OK, 2 rows affected (0.394 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> create table company(cid int,company_name char(5));
+Query OK, 0 rows affected (0.553 sec)
+
+MariaDB [employee]> alter table works drop company_name;
+Query OK, 0 rows affected (0.429 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+MariaDB [employee]> create table manager(id int,manager_name char(10));
+Query OK, 0 rows affected (0.533 sec)
+
+MariaDB [employee]> insert into manager(id,manager_name) values(4,"manager1"),(1,"manager1"),(2,"manager3"),(3,"manager2");
+Query OK, 4 rows affected (0.409 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> insert into company(id,company_name) values(1,"csk"),(2,"rcb"),(3,"srh"),(4,"mi");
+ERROR 1054 (42S22): Unknown column 'id' in 'field list'
+MariaDB [employee]> insert into company(cid,company_name) values(1,"csk"),(2,"rcb"),(3,"srh"),(4,"mi");
+Query OK, 4 rows affected (0.416 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+
+
+MariaDB [employee]> select *from company;
++------+--------------+
+| cid  | company_name |
++------+--------------+
+|    1 | csk          |
+|    2 | rcb          |
+|    3 | srh          |
+|    4 | mi           |
++------+--------------+
+4 rows in set (0.000 sec)
+
+MariaDB [employee]> select *from employee_;
++----+---------------+-----------+
+| id | name          | city      |
++----+---------------+-----------+
+|  1 | manish pandey | bengaluru |
+|  2 | virat kohli   | delhi     |
+|  3 | ms dhoni      | ranchi    |
+|  4 | rohit sharma  | mumbai    |
++----+---------------+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [employee]> select *from works;
++------+------+-----------+
+| id   | cid  | salary    |
++------+------+-----------+
+|    3 |    1 |  80000000 |
+|    2 |    2 | 100000000 |
+|    1 |    3 |  40000000 |
+|    4 |    4 |  80000000 |
++------+------+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [employee]> select *from manager;
++------+--------------+
+| id   | manager_name |
++------+--------------+
+|    4 | manager1     |
+|    1 | manager1     |
+|    2 | manager3     |
+|    3 | manager2     |
++------+--------------+
+4 rows in set (0.000 sec)
+
+
+MariaDB [employee]> alter table works add constraint f1  foreign key(id) references employee_(id);
+Query OK, 4 rows affected (1.443 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> alter table company add primary key(cid);
+Query OK, 0 rows affected (0.934 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> alter table works add constraint f2  foreign key(cid) references company(cid);
+Query OK, 4 rows affected (1.273 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [employee]> alter table manager add constraint f3  foreign key(id) references employee_(id);
+Query OK, 4 rows affected (1.088 sec)
+Records: 4  Duplicates: 0  Warnings: 0
