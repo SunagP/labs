@@ -144,7 +144,7 @@ MariaDB [lab_4]> select dept_id from emp group by dept_id having count(dept_id) 
  select eid,count(eid) from emp where MONTHNAME(hiredate) = MONTHNAME(2015-01-15) group by eid;
 
 
-   select eid,fname,count(eid) from emp where hiredate >='2015-01-00'and hiredate <'2015-02-00' group by hiredate;
+ select eid,fname,count(eid) from emp where hiredate >='2015-01-00'and hiredate <'2015-02-00' group by hiredate;
 +------+-------+------------+
 | eid  | fname | count(eid) |
 +------+-------+------------+
@@ -152,16 +152,209 @@ MariaDB [lab_4]> select dept_id from emp group by dept_id having count(dept_id) 
 +------+-------+------------+
 
 12.How many employees who are joined in January or September month.
+
+MariaDB [lab_4]> select count(*) from emp where month(hiredate) in ('01','09');
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+
+
+
 13.How many employees who are joined in 1985.
-14.How many employees joined each month in 1985.
-15.How many employees who are joined in March 1985.
-16.Which is the department id, having greater than or equal to 3 employees joined in April 1985.
+MariaDB [lab_4]> select count(eid) as numberOfEmp from emp where year(hiredate) = '1985';
++-------------+
+| numberOfEmp |
++-------------+
+|           0 |
++-------------+
+1 row in set (0.006 sec)
+
+MariaDB [lab_4]> select count(eid) as numberOfEmp from emp where year(hiredate) = '2015';
++-------------+
+| numberOfEmp |
++-------------+
+|           5 |
++-------------+
+
+
+14.How many employees joined each month in 1985.(2015)
+MariaDB [lab_4]> select month(hiredate) , count(eid) from emp where year(hiredate) = '2015' group by month(hiredate);
++-----------------+------------+
+| month(hiredate) | count(eid) |
++-----------------+------------+
+|               1 |          1 |
+|               2 |          1 |
+|               4 |          1 |
+|               5 |          1 |
+|               6 |          1 |
++-----------------+------------+
+
+
+15.How many employees who are joined in March 1985.(2015)
+MariaDB [lab_4]> select count(eid) as empInMarch from emp where month(hiredate)='03' and year(hiredate)='2015';
++------------+
+| empInMarch |
++------------+
+|          0 |
++------------+
+
+
+16.Which is the department id, having greater than or equal to 3 employees joined in April 1985.(2015)
+ 
+select dept_id,count(dept_id) from emp where month(hiredate)='04' and year(hiredate)='2015' group by dept_id having count(dept_id)>=3 ;
+
+
+Sub-Queries
+
+17.Display the employee who got the maximum salary.
+
+MariaDB [lab_4]> select * from emp where sal = (select max(sal) from emp);
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname | fname | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| 7839 | megan | john  | s     |    672 |       NULL | 2014-12-12 | 5500 | NULL |      30 |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+
+
+18.Display the employees who are working in Sales department
+MariaDB [lab_4]> select eid,lname,fname,mname,name as dept_name from emp,dept where emp.dept_id = dept.dept_id and name='sales';
++------+--------+---------+-------+-----------+
+| eid  | lname  | fname   | mname | dept_name |
++------+--------+---------+-------+-----------+
+| 7499 | allen  | kevin   | j     | sales     |
+| 7505 | doyle  | jean    | k     | sales     |
+| 7506 | dennis | lynn    | s     | sales     |
+| 7509 | sunny  | lynn    | s     | sales     |
+| 7521 | wark   | cynthia | d     | sales     |
+| 7839 | megan  | john    | s     | sales     |
++------+--------+---------+-------+-----------+
+6 rows in set (0.002 sec)
+
+19.Display the employees who are working as “Clerk”.
+MariaDB [lab_4]> select * from emp where job_id in (select job_id from job where  function ='clerk');
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname | fname | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| 7369 | smith | john  | q     |    667 |       7521 | 2018-12-17 |  800 | NULL |      20 |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+20.Display the employees who are working in “New York”
+
+MariaDB [lab_4]> select * from emp where dept_id in (select dept_id from dept where loc_id in (select loc_id from location where regional_group ='new york'));
+Empty set (0.003 sec)
+
+
+Display the employees who are working in “chicago”
+MariaDB [lab_4]> select * from emp where dept_id in (select dept_id from dept where loc_id in (select loc_id from location where regional_group ='chicago'));
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname | fname | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| 7369 | smith | john  | q     |    667 |       7521 | 2018-12-17 |  800 | NULL |      20 |
+
+
+21.Find out number of employees working in “Sales” department.
+
+MariaDB [lab_4]> select count(eid) from emp where dept_id in (select dept_id from dept where name = 'sales');
++------------+
+| count(eid) |
++------------+
+|          6 |
++------------+
+
+22.Update the employees’ salaries, who are working as Clerk on the basis of 10%.
+
+MariaDB [lab_4]> update emp set sal = (sal+0.1*sal) where job_id in (select job_id from job where function = 'clerk');
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab_4]> select * from emp;
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname  | fname   | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+| 7369 | smith  | john    | q     |    667 |       7521 | 2018-12-17 |  880 | NULL |      20 |
+| 7499 | allen  | kevin   | j     |    670 |       7507 | 2017-02-20 | 1600 |  300 |      30 |
+| 7505 | doyle  | jean    | k     |    671 |       7839 | 2015-04-04 | 2850 | NULL |      30 |
+| 7506 | dennis | lynn    | s     |    671 |       7839 | 2015-05-15 | 2750 | NULL |      30 |
+| 7507 | baker  | leslie  | d     |    671 |       7839 | 2015-06-10 | 2200 | NULL |      40 |
+| 7509 | sunny  | lynn    | s     |    672 |       7820 | 2015-01-15 | 2750 | NULL |      30 |
+| 7521 | wark   | cynthia | d     |    670 |       7505 | 2015-02-22 | 1250 |  500 |      30 |
+| 7839 | megan  | john    | s     |    672 |       NULL | 2014-12-12 | 5500 | NULL |      30 |
++------+--------+---------+-------+--------+------------+------------+------+------+---------+
+
+
+23.Delete the employees who are working in accounting department.
+
+ delete from emp where dept_id in (select dept_id from dept where name = 'accounting');
+ Query OK, 0 rows affected (0.003 sec)
+
+
+24.Display the second highest salary drawing employee details.
+MariaDB [lab_4]> select * from emp where sal = (select sal from emp order by sal desc limit 1,1);
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname | fname | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+| 7505 | doyle | jean  | k     |    671 |       7839 | 2015-04-04 | 2850 | NULL |      30 |
++------+-------+-------+-------+--------+------------+------------+------+------+---------+
+1 row in set (0.001 sec)
+
+25.Display the Nth highest salary drawing employee details
+
+input n value to get nth highest sal
+
+MariaDB [lab_4]> select * from emp where sal = (select sal from emp order by sal desc limit n-1,1);
+ 
+for n = 3
+
+MariaDB [lab_4]> select * from emp where sal = (select sal from emp order by sal desc limit 2,1);
++------+--------+-------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname  | fname | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+--------+-------+-------+--------+------------+------------+------+------+---------+
+| 7506 | dennis | lynn  | s     |    671 |       7839 | 2015-05-15 | 2750 | NULL |      30 |
+| 7509 | sunny  | lynn  | s     |    672 |       7820 | 2015-01-15 | 2750 | NULL |      30 |
++------+--------+-------+-------+--------+------------+------------+------+------+---------+
 
 
 
+Sub-Query operators: (ALL, ANY, SOME, EXISTS)
 
-select to_char(hiredate,'month') as hire_month, count(eid) from emp where hire_month = 'january'group by to_char(hiredate,'month')
+26.List out the employees who earn more than every employee in department 30.
+MariaDB [lab_4]> select * from emp where sal > all (select sal from emp where dept_id=30);
+Empty set (0.000 sec)
 
+27.List out the employees who earn more than the lowest salary in department 30.
+
+select * from emp where sal > any (select sal from emp where dept_id=30);
++------+--------+--------+-------+--------+------------+------------+------+------+---------+
+| eid  | lname  | fname  | mname | job_id | manager_id | hiredate   | sal  | comm | dept_id |
++------+--------+--------+-------+--------+------------+------------+------+------+---------+
+| 7499 | allen  | kevin  | j     |    670 |       7507 | 2017-02-20 | 1600 |  300 |      30 |
+| 7505 | doyle  | jean   | k     |    671 |       7839 | 2015-04-04 | 2850 | NULL |      30 |
+| 7506 | dennis | lynn   | s     |    671 |       7839 | 2015-05-15 | 2750 | NULL |      30 |
+| 7507 | baker  | leslie | d     |    671 |       7839 | 2015-06-10 | 2200 | NULL |      40 |
+| 7509 | sunny  | lynn   | s     |    672 |       7820 | 2015-01-15 | 2750 | NULL |      30 |
+| 7839 | megan  | john   | s     |    672 |       NULL | 2014-12-12 | 5500 | NULL |      30 |
++------+--------+--------+-------+--------+------------+------------+------+------+---------+
+
+
+28.Find out whose department has not employees.
+
+MariaDB [lab_4]> select * from dept where not exists (select * from emp where emp.dept_id=dept.dept_id);
++---------+------------+--------+
+| dept_id | name       | loc_id |
++---------+------------+--------+
+|      10 | accounting |    122 |
++---------+------------+--------+
+
+
+29.Find out which department does not have any employees.
+
+MariaDB [lab_4]> select * from dept where not exists (select * from emp where emp.dept_id=dept.dept_id);
++---------+------------+--------+
+| dept_id | name       | loc_id |
++---------+------------+--------+
+|      10 | accounting |    122 |
++---------+------------+--------+
 
 
 

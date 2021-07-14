@@ -1,0 +1,41 @@
+players(pid int PRIMARY KEY,pname varchar(20),color varchar(20) UNIQUE,amount int)
+
+land(lid int PRIMARY KEY,rent int,1house_rent int,2house_rent int,3house_rent int,hotel_rent int,lcolor varchar(20))
+
+owners(pid int FOREIGN KEY,lid int FOREIGN KEY,no_of_houses int,hotel boolean)
+
+mortgage(pid int FOREIGN KEY,lid int FOREIGN KEY,m_amount int)
+
+community_chest(id int PRIMARY KEY,task varchar(100))
+
+chance(id int PRIMARY KEY,task varchar(100))
+
+
+
+
+players(pid int PRIMARY KEY,pname varchar(20),color varchar(20) UNIQUE,amount int)3NF
+
+land(lid int PRIMARY KEY,landprice int, rent int,landname varchar(20))3NF
+
+owns(pid int FOREIGN KEY,lid int FOREIGN KEY)3NF
+
+moves(movenumber int primary key pid int foreign key,dice1 int dice2 int,lid int)or buy
+
+community_chest(id int PRIMARY KEY,task varchar(100))3NF
+
+chance(id int PRIMARY KEY,task varchar(100))3NF
+
+
+ariaDB [monopoly]> insert into land values(1,600,0),(2,0,0);
+Query OK, 2 rows affected (0.003 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [monopoly]> insert into land values(3,600,120),(4,0,250),(5,800,160),(6,700,140),(7,0,0),(8,1000,200),(9,0,250),(10,950,190);
+Query OK, 8 rows affected (0.004 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+MariaDB [monopoly]> insert into land values(11,600,120),(12,1200,240),(13,800,160),(14,700,140),(15,800,160),(16,500,100),(17,0,0),(18,900,180),(19,1000,200),(20,850,170);
+Query OK, 10 rows affected (0.006 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [monopoly]> insert into land values(21,600,120),(22,1200,240),(23,800,160),(24,700,140),(25,800,160),(26,500,100),(27,0,0),(28,900,180),(29,1000,200),(30,850,170),(31,1500,300);
