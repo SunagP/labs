@@ -1,0 +1,226 @@
+show create table orders;
+
+DBMS LAB 1 :-
+(SumithHegde 1BM19IS161)
+
+Create tables for the following schema:
+SAILOR (sid: integer, sname: string, rating: integer, age: real)
+BOAT (bid: integer, bname:string, color:string)
+RESERVES (sid: integer, bid: integer, day: date)
+Mandatory Queries:
+1) Add the required constraints on the created tables.
+2) Populate the relations with at least 5 tuples each.
+3) Select names and ages of all sailors. Rename sname as ‘pirates’
+4) Find all sailors with a rating above 8?
+5) Find the sid of sailors who have reserved a red boat?
+6) Delete all boats which have never been reserved.
+7)Find the names of sailors who have reserved boat number 1?
+8) Find the names of sailors who have reserved a red boat?
+9)Find the names of sailors who have reserved atleast one boat?
+10)Find the name and age of sailors whose name begins with c and ends with w and has atleast
+3 characters?
+11)Find the name and age of oldest sailor
+12)Find the names of sailors who in the order of age.
+
+
+
+MariaDB [(none)]> create database sail;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [(none)]> use sail;
+Database changed
+MariaDB [sail]> create table sailor(sid int,sname char(25),age int,rating int,check(age>0),check(rating<=10),primary key(sid));
+Query OK, 0 rows affected (0.528 sec)
+
+MariaDB [sail]> insert into sailor(sid,sname,age,rating) values(1,'CaptainJackSparrow',35,10),(2,'WillTurner',24,8),(3,'MonkeyDLuffy',16,9),(4,'DavyJones',100,8),(5,'Flint',150,7);
+Query OK, 5 rows affected (0.043 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [sail]> select *from sailor;
++-----+--------------------+------+--------+
+| sid | sname              | age  | rating |
++-----+--------------------+------+--------+
+|   1 | CaptainJackSparrow |   35 |     10 |
+|   2 | WillTurner         |   24 |      8 |
+|   3 | MonkeyDLuffy       |   16 |      9 |
+|   4 | DavyJones          |  100 |      8 |
+|   5 | Flint              |  150 |      7 |
++-----+--------------------+------+--------+
+5 rows in set (0.001 sec)
+
+MariaDB [sail]> create table boat(bid int,bname char(25),color char(10),primary key(bid));
+Query OK, 0 rows affected (0.579 sec)
+
+MariaDB [sail]> insert into boat(bid,bname,color) values(1,'BlackPearl','black'),(2,'TheFlyingDutchman','green'),(3,'Interceptor','red'),(4,'TheWalrus','red'),(5,'TheThousandSunny','grey');
+Query OK, 5 rows affected (0.386 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [sail]> select *from boat;
++-----+-------------------+-------+
+| bid | bname             | color |
++-----+-------------------+-------+
+|   1 | BlackPearl        | black |
+|   2 | TheFlyingDutchman | green |
+|   3 | Interceptor       | red   |
+|   4 | TheWalrus         | red   |
+|   5 | TheThousandSunny  | grey  |
++-----+-------------------+-------+
+5 rows in set (0.001 sec)
+
+MariaDB [sail]> create table reserve(bid int,sid int,year int,foreign key(bid) references boat(bid),foreign key(sid) references sailor(sid));
+Query OK, 0 rows affected (0.628 sec)
+
+MariaDB [sail]> insert into reserve(bid,sid,year) values(1,1,1750),(1,2,1760),(2,4,1685),(4,5,1854),(5,3,1350);
+Query OK, 5 rows affected (0.411 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [sail]> select *from reserve;
++------+------+------+
+| bid  | sid  | year |
++------+------+------+
+|    1 |    1 | 1750 |
+|    1 |    2 | 1760 |
+|    2 |    4 | 1685 |
+|    4 |    5 | 1854 |
+|    5 |    3 | 1350 |
++------+------+------+
+5 rows in set (0.001 sec)
+
+MariaDB [sail]> select sname,age from sailor;
++--------------------+------+
+| sname              | age  |
++--------------------+------+
+| CaptainJackSparrow |   35 |
+| WillTurner         |   24 |
+| MonkeyDLuffy       |   16 |
+| DavyJones          |  100 |
+| Flint              |  150 |
++--------------------+------+
+5 rows in set (0.000 sec)
+
+MariaDB [sail]> alter table sailor change sname pirates char(25);
+Query OK, 0 rows affected (0.418 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [sail]> select *from sailor;
++-----+--------------------+------+--------+
+| sid | pirates            | age  | rating |
++-----+--------------------+------+--------+
+|   1 | CaptainJackSparrow |   35 |     10 |
+|   2 | WillTurner         |   24 |      8 |
+|   3 | MonkeyDLuffy       |   16 |      9 |
+|   4 | DavyJones          |  100 |      8 |
+|   5 | Flint              |  150 |      7 |
++-----+--------------------+------+--------+
+5 rows in set (0.000 sec)
+
+MariaDB [sail]> select pirates from sailor where rating>8;
++--------------------+
+| pirates            |
++--------------------+
+| CaptainJackSparrow |
+| MonkeyDLuffy       |
++--------------------+
+2 rows in set (0.000 sec)
+
+MariaDB [sail]> select sailor.sid,sailor.pirates boat.color,boat.bname from sailor,reserve,boat where color='red'and boat.bid=reserve.bid and sailor.sid=reserve.sid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '.color,boat.bname from sailor,reserve,boat where color='red'and boat.bid=rese...' at line 1
+MariaDB [sail]> select sid,pirates color,bname from sailor,reserve,boat where color='red'and boat.bid=reserve.bid and sailor.sid=reserve.sid;
+ERROR 1052 (23000): Column 'sid' in field list is ambiguous
+MariaDB [sail]> select sailor.sid,pirates,color,bname from sailor,reserve,boat where color='red'and boat.bid=reserve.bid and sailor.sid=reserve.sid;
++-----+---------+-------+-----------+
+| sid | pirates | color | bname     |
++-----+---------+-------+-----------+
+|   5 | Flint   | red   | TheWalrus |
++-----+---------+-------+-----------+
+1 row in set (0.002 sec)
+
+MariaDB [sail]> select bname from boat,sailor,reserve where boat.bid=reserve.bid and sailor.sid=reserve.sid and pirates='MonkeyDLuffy';
++------------------+
+| bname            |
++------------------+
+| TheThousandSunny |
++------------------+
+1 row in set (0.000 sec)
+
+MariaDB [sail]> delete from boat where bid not in (select bid from reserve);
+Query OK, 1 row affected (0.417 sec)
+
+MariaDB [sail]> select *from boat;
++-----+-------------------+-------+
+| bid | bname             | color |
++-----+-------------------+-------+
+|   1 | BlackPearl        | black |
+|   2 | TheFlyingDutchman | green |
+|   4 | TheWalrus         | red   |
+|   5 | TheThousandSunny  | grey  |
++-----+-------------------+-------+
+4 rows in set (0.000 sec)
+
+MariaDB [sail]> select pirates,rating from sailor,reserve where bid=1;
++--------------------+--------+
+| pirates            | rating |
++--------------------+--------+
+| CaptainJackSparrow |     10 |
+| CaptainJackSparrow |     10 |
+| WillTurner         |      8 |
+| WillTurner         |      8 |
+| MonkeyDLuffy       |      9 |
+| MonkeyDLuffy       |      9 |
+| DavyJones          |      8 |
+| DavyJones          |      8 |
+| Flint              |      7 |
+| Flint              |      7 |
++--------------------+--------+
+10 rows in set (0.006 sec)
+
+MariaDB [sail]> select pirates,rating from sailor,reserve where bid=1 and sailor.sid=reserve.sid;
++--------------------+--------+
+| pirates            | rating |
++--------------------+--------+
+| CaptainJackSparrow |     10 |
+| WillTurner         |      8 |
++--------------------+--------+
+2 rows in set (0.000 sec)
+
+MariaDB [sail]> select pirates,sailor.sid from sailor,reserve where sailor.sid=reserve.sid and sailor.sid in (select sid from reserve);
++--------------------+-----+
+| pirates            | sid |
++--------------------+-----+
+| CaptainJackSparrow |   1 |
+| WillTurner         |   2 |
+| MonkeyDLuffy       |   3 |
+| DavyJones          |   4 |
+| Flint              |   5 |
++--------------------+-----+
+5 rows in set (0.003 sec)
+
+MariaDB [sail]> select pirates,age from sailor where pirates like 'c_%w';
++--------------------+------+
+| pirates            | age  |
++--------------------+------+
+| CaptainJackSparrow |   35 |
++--------------------+------+
+1 row in set (0.002 sec)
+
+MariaDB [sail]> select pirates,age from sailor where pirates age=(select max(age) from sailor);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'age=(select max(age) from sailor)' at line 1
+MariaDB [sail]> select pirates,age from sailor where age=(select max(age) from sailor);
++---------+------+
+| pirates | age  |
++---------+------+
+| Flint   |  150 |
++---------+------+
+1 row in set (0.006 sec)
+
+MariaDB [sail]> select pirates,age from sailor order by age;
++--------------------+------+
+| pirates            | age  |
++--------------------+------+
+| MonkeyDLuffy       |   16 |
+| WillTurner         |   24 |
+| CaptainJackSparrow |   35 |
+| DavyJones          |  100 |
+| Flint              |  150 |
++--------------------+------+
+5 rows in set (0.000 sec)

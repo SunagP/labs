@@ -1,0 +1,561 @@
+MariaDB [lab3]> create database lab4;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [lab3]> use lab4
+Database changed
+MariaDB [lab4]> create table location(lid int,reg_group varchar(15));
+Query OK, 0 rows affected (0.658 sec)
+
+MariaDB [lab4]> insert into location(lid,reg_group) values(122,'new york'),(123,'dallas'),(124,'chicago'),(167,'boston');
+Query OK, 4 rows affected (0.386 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> create table department(did int,name varchar(15),lid int);
+Query OK, 0 rows affected (0.593 sec)
+
+MariaDB [lab4]> insert into department(did,name,lid) values(10,'accounting',122),(20,'research',124),(30,'sales',123),(40,'operations',167);
+Query OK, 4 rows affected (0.420 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> create table job(jid int,function varchar(15));
+Query OK, 0 rows affected (0.597 sec)
+
+MariaDB [lab4]> insert into job(jid,function) values(667,'clerk),(668,'staff'),(669,'analyst'),(670,'salesperson'),(671,'manager'),(672,'president');
+    '>
+    '> ;
+    '> )
+    '> );
+    '> Bye
+
+Sumith Hegde@LAPTOP-CSD1D0O5 d:\xampp
+# mysql -h localhost -u root
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 9
+Server version: 10.4.17-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> use lab4;
+Database changed
+MariaDB [lab4]>  insert into job(jid,function) values(667,'clerk'),(668,'staff'),(669,'analyst'),(670,'salesperson'),(671,'manager'),(672,'president');
+Query OK, 6 rows affected (0.438 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> alter table location add constraint c1 primary key(lid);
+Query OK, 0 rows affected, 1 warning (1.922 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab4]> alter table department add constraint c2 primary key(did);
+Query OK, 0 rows affected, 1 warning (0.830 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab4]> alter table job add constraint c3 primary key(jid);
+Query OK, 0 rows affected, 1 warning (1.145 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab4]> alter table department add constraint c4 foreign key(lid) references location(lid);
+Query OK, 4 rows affected (1.938 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> create table employee(eid int primary key,lname varchar(15),fname varchar(15),mname varchar(5),jid int,managerId int,Hdate date,salary int,comm int,did int);
+Query OK, 0 rows affected (0.587 sec)
+
+MariaDB [lab4]> insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did)
+    -> values(7839,'megan','john','s',672,'NULL','2014-12-14',5500,'NULL',30);
+Query OK, 1 row affected, 2 warnings (0.407 sec)
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7369,'smith','john','q',667,7521,'2014-17-18',800,'NULL',20);
+Query OK, 1 row affected, 2 warnings (0.396 sec)
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7499,'allen','kevin','j',670,7507,'2017-02-20',1600,300,30);
+Query OK, 1 row affected (0.130 sec)
+
+MariaDB [lab4]> update employee set date='2018-12-17 where eid=7369;
+    '> ';
+ERROR 1054 (42S22): Unknown column 'date' in 'field list'
+MariaDB [lab4]> update employee set date='2018-12-17' where eid=7369;
+ERROR 1054 (42S22): Unknown column 'date' in 'field list'
+MariaDB [lab4]> update employee set Hdate='2018-12-17' where eid=7369;
+Query OK, 1 row affected (0.401 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7505,'doyle','jean','k',671,7839,'2015-04-04',2850,'NULL',30);
+Query OK, 1 row affected, 1 warning (0.153 sec)
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7506,'dennis','lynn','s',671,7839,'2015-05-15',2750,'NULL',30);
+Query OK, 1 row affected, 1 warning (0.404 sec)
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7507,'baker','lesslie','d',671,7839,'2015-06-10',2200,'NULL',40);
+Query OK, 1 row affected, 1 warning (0.381 sec)
+
+MariaDB [lab4]>  insert into employee(eid,lname,fname,mname,jid,managerId,Hdate,salary,comm,did) values(7521,'wark','cynthia','d',670,7505,'2015-02-22',1250,500,30);
+Query OK, 1 row affected (0.365 sec)
+
+MariaDB [lab4]> alter table employee add constraint c4 foreign key(jid) references job(jid);
+ERROR 1005 (HY000): Can't create table `lab4`.`employee` (errno: 121 "Duplicate key on write or update")
+MariaDB [lab4]> alter table employee add constraint c5 foreign key(jid) references job(jid);
+Query OK, 7 rows affected (1.356 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> alter table employee add constraint c6 foreign key(managerId) references employee(eid);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`lab4`.`#sql-4dd0_9`, CONSTRAINT `c6` FOREIGN KEY (`managerId`) REFERENCES `employee` (`eid`))
+MariaDB [lab4]> alter table employee add constraint c6 foreign key(did) references department(did);
+Query OK, 7 rows affected (1.276 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> alter table employee add constraint c7 primary key(eid);
+ERROR 1068 (42000): Multiple primary key defined
+MariaDB [lab4]> select *from employee;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 |    0 |   20 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 |    0 |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 |    0 |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 |    0 |   40 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |         0 | 2014-12-14 |   5500 |    0 |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.001 sec)
+
+MariaDB [lab4]> update employee set managerId=NULL where eid=7839;
+Query OK, 1 row affected (0.037 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab4]> select *from employee;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 |    0 |   20 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 |    0 |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 |    0 |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 |    0 |   40 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 |    0 |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+MariaDB [lab4]> alter table employee add constraint c7 foreign key(managerId) references employee(eid);
+Query OK, 7 rows affected (1.369 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [lab4]> update employee set comm=NULL where eid in(7369,7505,7506,7507,7839);
+Query OK, 5 rows affected (0.387 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+MariaDB [lab4]> select *from employee;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+1)
+MariaDB [lab4]> select eid,lname from employee order by eid;
++------+--------+
+| eid  | lname  |
++------+--------+
+| 7369 | smith  |
+| 7499 | allen  |
+| 7505 | doyle  |
+| 7506 | dennis |
+| 7507 | baker  |
+| 7521 | wark   |
+| 7839 | megan  |
++------+--------+
+7 rows in set (0.001 sec)
+
+2)
+MariaDB [lab4]> select eid,lname from employee order by salary desc;
++------+--------+
+| eid  | lname  |
++------+--------+
+| 7839 | megan  |
+| 7505 | doyle  |
+| 7506 | dennis |
+| 7507 | baker  |
+| 7499 | allen  |
+| 7521 | wark   |
+| 7369 | smith  |
++------+--------+
+7 rows in set (0.000 sec)
+
+3)
+MariaDB [lab4]> select *from employee order by lname asc,salary desc;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.001 sec)
+
+4)a
+MariaDB [lab4]> select *from employee order by lname,salary desc;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+4)b
+MariaDB [lab4]> select *from employee order by salary desc;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+MariaDB [lab4]> select *from employee order by lnmae;
+ERROR 1054 (42S22): Unknown column 'lnmae' in 'order clause'
+
+4)c
+MariaDB [lab4]> select *from employee order by lname;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+4)d
+MariaDB [lab4]> select *from employee order by did desc;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    800 | NULL |   20 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+7 rows in set (0.000 sec)
+
+
+5)
+MariaDB [lab4]> select name,employee.did,count(eid) from department,employee where department.did=employee.did group by employee.did;
++------------+------+------------+
+| name       | did  | count(eid) |
++------------+------+------------+
+| research   |   20 |          1 |
+| sales      |   30 |          5 |
+| operations |   40 |          1 |
++------------+------+------------+
+
+7)
+MariaDB [lab4]> select jid,max(salary),min(salary),avg(salary) from employee group by jid;
++------+-------------+-------------+-------------+
+| jid  | max(salary) | min(salary) | avg(salary) |
++------+-------------+-------------+-------------+
+|  667 |         800 |         800 |    800.0000 |
+|  670 |        1600 |        1250 |   1425.0000 |
+|  671 |        2850 |        2200 |   2600.0000 |
+|  672 |        5500 |        5500 |   5500.0000 |
++------+-------------+-------------+-------------+
+4 rows in set (0.000 sec)
+
+6)
+MariaDB [lab4]> select did,max(salary),min(salary),avg(salary) from employee group by did;
++------+-------------+-------------+-------------+
+| did  | max(salary) | min(salary) | avg(salary) |
++------+-------------+-------------+-------------+
+|   20 |         800 |         800 |    800.0000 |
+|   30 |        5500 |        1250 |   2790.0000 |
+|   40 |        2200 |        2200 |   2200.0000 |
++------+-------------+-------------+-------------+
+
+8)
+MariaDB [lab4]> select month(Hdate),count(eid) from employee group by month(Hdate);
++--------------+------------+
+| month(Hdate) | count(eid) |
++--------------+------------+
+|            2 |          2 |
+|            4 |          1 |
+|            5 |          1 |
+|            6 |          1 |
+|           12 |          2 |
++--------------+------------+
+5 rows in set (0.000 sec)
+
+9)
+MariaDB [lab4]> select month(Hdate),year(Hdate),count(eid) from employee group by year(Hdate),month(Hdate);
++--------------+-------------+------------+
+| month(Hdate) | year(Hdate) | count(eid) |
++--------------+-------------+------------+
+|           12 |        2014 |          1 |
+|            2 |        2015 |          1 |
+|            4 |        2015 |          1 |
+|            5 |        2015 |          1 |
+|            6 |        2015 |          1 |
+|            2 |        2017 |          1 |
+|           12 |        2018 |          1 |
++--------------+-------------+------------+
+7 rows in set (0.476 sec)
+
+MariaDB [lab4]> select month(Hdate),year(Hdate),count(eid) from employee group by year(Hdate);
++--------------+-------------+------------+
+| month(Hdate) | year(Hdate) | count(eid) |
++--------------+-------------+------------+
+|           12 |        2014 |          1 |
+|            4 |        2015 |          4 |
+|            2 |        2017 |          1 |
+|           12 |        2018 |          1 |
++--------------+-------------+------------+
+4 rows in set (0.000 sec)
+
+10)
+MariaDB [lab4]> select name,employee.did,count(eid) from department,employee where department.did=employee.did group by employee.did having count(eid)>4;
++-------+------+------------+
+| name  | did  | count(eid) |
++-------+------+------------+
+| sales |   30 |          5 |
++-------+------+------------+
+1 row in set (0.002 sec)
+
+11)
+MariaDB [lab4]> select count(eid) from employee where month(Hdate)=1;
++------------+
+| count(eid) |
++------------+
+|          0 |
++------------+
+MariaDB [lab4]> select count(eid) from employee where month(Hdate)=12;
++------------+
+| count(eid) |
++------------+
+|          2 |
++------------+
+
+12)
+MariaDB [lab4]> select count(eid) from employee where month(Hdate)=1 or month(Hdate)=9;
++------------+
+| count(eid) |
++------------+
+|          0 |
++------------+
+MariaDB [lab4]> select count(eid) from employee where month(Hdate)=12 or month(Hdate)=2;
++------------+
+| count(eid) |
++------------+
+|          4 |
++------------+
+
+13)
+MariaDB [lab4]> select count(eid) from employee where year(Hdate)=1985;
++------------+
+| count(eid) |
++------------+
+|          0 |
++------------+
+1 row in set (0.000 sec)
+
+MariaDB [lab4]> select count(eid) from employee where year(Hdate)=2015;
++------------+
+| count(eid) |
++------------+
+|          4 |
++------------+
+
+14)
+MariaDB [lab4]> select month(Hdate),count(eid) from employee where year(Hdate)=2015 group by month(Hdate);
++--------------+------------+
+| month(Hdate) | count(eid) |
++--------------+------------+
+|            2 |          1 |
+|            4 |          1 |
+|            5 |          1 |
+|            6 |          1 |
++--------------+------------+
+
+15)
+ariaDB [lab4]> select count(eid) from employee where year(Hdate)=2015 and month(Hdate)=2;
++------------+
+| count(eid) |
++------------+
+|          1 |
++------------+
+
+16)
+MariaDB [lab4]> select name,department.did,count(eid) from department,employee where department.did=employee.did and year(Hdate)=2015;
++-------+------+------------+
+| name  | did  | count(eid) |
++-------+------+------------+
+| sales |   30 |          4 |
++-------+------+------------+
+
+17)
+MariaDB [lab4]> select fname,lname from employee where salary=(select max(salary) from employee);
++-------+-------+
+| fname | lname |
++-------+-------+
+| john  | megan |
++-------+-------+
+
+18)
+MariaDB [lab4]> select fname,lname,eid from employee,department where employee.did=department.did and name='sales';
++---------+--------+------+
+| fname   | lname  | eid  |
++---------+--------+------+
+| kevin   | allen  | 7499 |
+| jean    | doyle  | 7505 |
+| lynn    | dennis | 7506 |
+| cynthia | wark   | 7521 |
+| john    | megan  | 7839 |
++---------+--------+------+
+
+19)
+MariaDB [lab4]> select fname,lname,eid,function from employee,job where eid in(select eid from job) and employee.jid=job.jid and function='clerk';
++-------+-------+------+----------+
+| fname | lname | eid  | function |
++-------+-------+------+----------+
+| john  | smith | 7369 | clerk    |
++-------+-------+------+----------+
+
+20)
+MariaDB [lab4]> select fname,lname,eid,reg_group from employee,department,location where department.lid in(select lid from location where reg_group='new york' ) and employee.did=department.did;
+Empty set (0.374 sec)
+
+MariaDB [lab4]> select fname,lname,eid,reg_group from employee,department,location where department.lid=(select lid from location where reg_group='dallas' ) and employee.did=department.did and department.lid=location.lid;
++---------+--------+------+-----------+
+| fname   | lname  | eid  | reg_group |
++---------+--------+------+-----------+
+| kevin   | allen  | 7499 | dallas    |
+| jean    | doyle  | 7505 | dallas    |
+| lynn    | dennis | 7506 | dallas    |
+| cynthia | wark   | 7521 | dallas    |
+| john    | megan  | 7839 | dallas    |
++---------+--------+------+-----------+
+
+21)
+ [lab4]> select count(eid) from employee,department where employee.did=department.did and name='sales';
++------------+
+| count(eid) |
++------------+
+|          5 |
++------------+
+
+22)
+ [lab4]> update employee set salary=((salary*110)/100) where eid in(select eid from employee,job where employee.jid=job.jid and function='clerk');
+Query OK, 1 row affected (0.477 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab4]> select *from employee
+    -> ;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    880 | NULL |   20 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+
+ [lab4]> update employee set salary=(salary*110)/100 where eid in(select eid from employee,job where employee.jid=job.jid and function='clerk');
+Query OK, 1 row affected (0.413 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab4]> select *from employee;
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7369 | smith  | john    | q     |  667 |      7521 | 2018-12-17 |    968 | NULL |   20 |
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7521 | wark   | cynthia | d     |  670 |      7505 | 2015-02-22 |   1250 |  500 |   30 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+
+
+24)
+MariaDB [lab4]> select *from employee where salary=(select max(salary) from employee where salary not in (select max(salary) from employee));
++------+-------+-------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname | fname | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+-------+-------+-------+------+-----------+------------+--------+------+------+
+| 7505 | doyle | jean  | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
++------+-------+-------+-------+------+-----------+------------+--------+------+------+
+
+25) select * from employee where salary = (select salary from employee order by salary desc limit n-1,1);
+
+MariaDB [lab4]> select * from employee where salary = (select salary from employee order by salary desc limit 2,1);
++------+--------+-------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+-------+-------+------+-----------+------------+--------+------+------+
+| 7506 | dennis | lynn  | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
++------+--------+-------+-------+------+-----------+------------+--------+------+------+
+1 row in set (0.445 sec)
+
+26)MariaDB [lab4]> select * from employee where salary > all (select salary from employee where did=30);
+Empty set (0.123 sec)
+
+27)MariaDB [lab4]> select * from employee where salary > any (select salary from employee where did=30);
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| eid  | lname  | fname   | mname | jid  | managerId | Hdate      | salary | comm | did  |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+| 7499 | allen  | kevin   | j     |  670 |      7507 | 2017-02-20 |   1600 |  300 |   30 |
+| 7505 | doyle  | jean    | k     |  671 |      7839 | 2015-04-04 |   2850 | NULL |   30 |
+| 7506 | dennis | lynn    | s     |  671 |      7839 | 2015-05-15 |   2750 | NULL |   30 |
+| 7507 | baker  | lesslie | d     |  671 |      7839 | 2015-06-10 |   2200 | NULL |   40 |
+| 7839 | megan  | john    | s     |  672 |      NULL | 2014-12-14 |   5500 | NULL |   30 |
++------+--------+---------+-------+------+-----------+------------+--------+------+------+
+5 rows in set (0.009 sec)
+
+28)MariaDB [lab4]>  select * from department where not exists (select * from employee where employee.did=department.did);
++-----+------------+------+
+| did | name       | lid  |
++-----+------------+------+
+|  10 | accounting |  122 |
++-----+------------+------+
+1 row in set (0.383 sec)
+
+29)MariaDB [lab4]>  select * from department where not exists (select * from employee where employee.did=department.did);
++-----+------------+------+
+| did | name       | lid  |
++-----+------------+------+
+|  10 | accounting |  122 |
++-----+------------+------+
+1 row in set (0.383 sec)
+
+30)

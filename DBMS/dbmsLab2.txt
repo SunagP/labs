@@ -1,0 +1,210 @@
+
+Setting environment for using XAMPP for Windows.
+Sumith Hegde@LAPTOP-CSD1D0O5 d:\xampp
+# mysql -h localhost -u root;
+ERROR 1045 (28000): Access denied for user 'root;'@'localhost' (using password: NO)
+
+Sumith Hegde@LAPTOP-CSD1D0O5 d:\xampp
+# mysql -h localhost -u root
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 9
+Server version: 10.4.17-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> create database lab1;
+Query OK, 1 row affected (0.343 sec)
+
+MariaDB [(none)]> use lab1;
+Database changed
+MariaDB [lab1]> create database lab2;
+Query OK, 1 row affected (0.002 sec)
+
+MariaDB [lab1]> use lab2;
+Database changed
+MariaDB [lab2]> create table supplier(sid int,sname varchar(15),city varchar(15));
+Query OK, 0 rows affected (0.311 sec)
+
+MariaDB [lab2]> create table part(pid int,pname varchar(10),color varchar(10));
+Query OK, 0 rows affected (0.628 sec)
+
+MariaDB [lab2]> create table catalog(sid int,pid int,cost real);
+Query OK, 0 rows affected (0.535 sec)
+
+MariaDB [lab2]> insert into part(pid,pname,color) values(100,'engine','grey'),(101,'tyers','black'),(102,'glass','none'),(103,'seats','brown'),(104,'body','red'),(105,'rim','green'),(106,'lights','yellow');
+Query OK, 7 rows affected (0.379 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [lab2]> insert into supplier(sid,sname,city) values(200,'MRF','chennai'),(201,'Motors','bangalore'),(202,'shield','mumbai'),(203,'tata','delhi'),(204,'toyota','hyderabad'),(205,'lightzone','indore');
+Query OK, 6 rows affected (0.387 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MariaDB [lab2]> alter table supplier add  constraint c1  primary key(sid);
+Query OK, 0 rows affected, 1 warning (0.966 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab2]> alter table part add  constraint c2  primary key(pid);
+Query OK, 0 rows affected, 1 warning (0.816 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+
+MariaDB [lab2]> alter table catalog add  constraint c3  foreign key(pid) references part(pid);
+Query OK, 0 rows affected (1.246 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+'
+MariaDB [lab2]> alter table catalog add  constraint c4  foreign key(sid) references supplier(sid);
+Query OK, 0 rows affected (0.991 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab2]> select *from supplier;
++-----+-----------+-----------+
+| sid | sname     | city      |
++-----+-----------+-----------+
+| 200 | MRF       | chennai   |
+| 201 | Motors    | bangalore |
+| 202 | shield    | mumbai    |
+| 203 | tata      | delhi     |
+| 204 | toyota    | hyderabad |
+| 205 | lightzone | indore    |
++-----+-----------+-----------+
+6 rows in set (0.368 sec)
+
+MariaDB [lab2]> select *from part;
++-----+--------+--------+
+| pid | pname  | color  |
++-----+--------+--------+
+| 100 | engine | grey   |
+| 101 | tyers  | black  |
+| 102 | glass  | none   |
+| 103 | seats  | brown  |
+| 104 | body   | red    |
+| 105 | rim    | green  |
+| 106 | lights | yellow |
++-----+--------+--------+
+7 rows in set (0.000 sec)
+
+MariaDB [lab2]> insert into catalog(pid,sid,cost) values(100,203,50000),(101,200,12000),(102,202,5000),(104,204,40000),(105,200,4000),(106,205,4000);
+Query OK, 6 rows affected (0.389 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MariaDB [lab2]> select *from catalog;
++------+------+-------+
+| sid  | pid  | cost  |
++------+------+-------+
+|  203 |  100 | 50000 |
+|  200 |  101 | 12000 |
+|  202 |  102 |  5000 |
+|  204 |  104 | 40000 |
+|  200 |  105 |  4000 |
+|  205 |  106 |  4000 |
++------+------+-------+
+
+MariaDB [lab2]> select sid,sname from supplier;
++-----+-----------+
+| sid | sname     |
++-----+-----------+
+| 200 | MRF       |
+| 201 | Motors    |
+| 202 | shield    |
+| 203 | tata      |
+| 204 | toyota    |
+| 205 | lightzone |
++-----+-----------+
+6 rows in set (0.000 sec)
+
+MariaDB [lab2]> select * from catalog where cost=(select max(cost) from catalog);
++------+------+-------+
+| sid  | pid  | cost  |
++------+------+-------+
+|  203 |  100 | 50000 |
++------+------+-------+
+1 row in set (0.389 sec)
+
+
+MariaDB [lab2]> select pname,sname,color,cost from supplier,catalog,part where cost=(select max(cost) from catalog) and supplier.sid=catalog.sid and part.pid=catalog.pid;
++--------+-------+-------+-------+
+| pname  | sname | color | cost  |
++--------+-------+-------+-------+
+| engine | tata  | grey  | 50000 |
++--------+-------+-------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [lab2]> select pname,color from part where pid in(select pid from catalog);
++--------+--------+
+| pname  | color  |
++--------+--------+
+| engine | grey   |
+| tyers  | black  |
+| glass  | none   |
+| body   | red    |
+| rim    | green  |
+| lights | yellow |
++--------+--------+
+6 rows in set (0.002 sec)
+
+MariaDB [lab2]> select pname,color from part where pid not in(select pid from catalog);
++-------+-------+
+| pname | color |
++-------+-------+
+| seats | brown |
++-------+-------+
+1 row in set (0.092 sec)
+
+MariaDB [lab2]> select sname,city from supplier,catalog,part where supplier.sid=catalog.sid and part.pid=catalog.pid and color in('red','green');
++--------+-----------+
+| sname  | city      |
++--------+-----------+
+| toyota | hyderabad |
+| MRF    | chennai   |
++--------+-----------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab2]> select sname,city,supplier.sid from supplier,catalog,part where supplier.sid=catalog.sid and part.pid=catalog.pid and color in('red','green');
++--------+-----------+-----+
+| sname  | city      | sid |
++--------+-----------+-----+
+| toyota | hyderabad | 204 |
+| MRF    | chennai   | 200 |
++--------+-----------+-----+
+2 rows in set (0.000 sec)
+
+MariaDB [lab2]> select sname,city,supplier.sid from supplier,catalog,part where supplier.sid=catalog.sid and part.pid=catalog.pid and color='red';
++--------+-----------+-----+
+| sname  | city      | sid |
++--------+-----------+-----+
+| toyota | hyderabad | 204 |
+|        |           |     |
++--------+-----------+-----+
+
+MariaDB [lab2]> select sname from supplier where city='bangalore';
++--------+
+| sname  |
++--------+
+| Motors |
++--------+
+1 row in set (0.000 sec)
+
+MariaDB [lab2]> select cost from catalog group by cost having max(cost);
++-------+
+| cost  |
++-------+
+|  4000 |
+|  5000 |
+| 12000 |
+| 40000 |
+| 50000 |
++-------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab2]> select pname,cost from catalog,part where catalog.pid=part.pid and color in('red','green') and cost in(select max(cost) from catalog group by(sid));
++-------+-------+
+| pname | cost  |
++-------+-------+
+| body  | 40000 |
+| rim   |  4000 |
++-------+-------+
+
+MariaDB [lab2]> select pname,cost from catalog,part where catalog.pid=part.pid and color='red' and color= 'green' and cost in(select max(cost) from catalog group by(sid));
+Empty set (0.000 sec)

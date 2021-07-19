@@ -11,7 +11,10 @@ Mandatory Queries:
 5) Find the pnames of parts for which there is some supplier.
 
 6) Find the sids of suppliers who supply a red part and a green part.
+select c1.sid from catalog c1 ,catalog c2 where c1.sid=c2.sid and c1.pid in  (select pid from part where color = "green") and c2.pid in (select pid from part where color = "red");
+
 7) Delete all parts of a given ID.
+
 Vandit Agarwal10:00 AM
 select sid from supplier where sid=(select sid from catalog where pid=(select pid from part where color='red'or color='green' ));
 Varun N10:02 AM

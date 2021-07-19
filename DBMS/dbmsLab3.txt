@@ -1,0 +1,258 @@
+MariaDB [lab2]> create database lab3;
+Query OK, 1 row affected (0.091 sec)
+
+MariaDB [lab2]> use lab3;
+Database changed
+MariaDB [lab3]> create table salesman(sid int,city varchar(15),commission int);
+Query OK, 0 rows affected (0.648 sec)
+
+MariaDB [lab3]> create table customer(cid int,name varchar(15),city varchar(15));
+Query OK, 0 rows affected (0.610 sec)
+
+MariaDB [lab3]> create table orders(ono int,amount real,cid int,sid int,date date);
+Query OK, 0 rows affected (0.574 sec)
+
+MariaDB [lab3]> alter table salesman add constraint c1 primary key(sid);
+Query OK, 0 rows affected, 1 warning (0.883 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab3]> alter table customer add constraint c2 primary key(cid);
+Query OK, 0 rows affected, 1 warning (0.583 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab3]> insert into salesman(sid,city,commission) values(100,'delhi',15),(101,'bangalore',26),(103,'chennai',26),(104,'hyderabad',12);
+Query OK, 4 rows affected (0.373 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [lab3]> insert into customer(cid,name,city) values(200,'cust1','bhopal'),(201,'cust2','kolkatta'),(202,'cust3','bangalore'),(203,'cust4','ahmedabad'),(204,'cust5','delhi');
+Query OK, 5 rows affected (0.380 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [lab3]> alter table orders add constraint c3 foreign key(cid) references customer(cid);
+Query OK, 0 rows affected (1.098 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab3]> alter table orders add constraint c4 foreign key(sid) references salesman(sid);
+Query OK, 0 rows affected (1.391 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(301,15000,2018-06-06,100,200);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`lab3`.`orders`, CONSTRAINT `c3` FOREIGN KEY (`cid`) REFERENCES `customer` (`cid`))
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(301,15000,2018-06-06,200,100);
+Query OK, 1 row affected, 1 warning (0.370 sec)
+
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(302,10000,2018-01-06,201,100);
+Query OK, 1 row affected, 1 warning (0.367 sec)
+
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(303,17000,2019-02-18,202,103);
+Query OK, 1 row affected, 1 warning (0.380 sec)
+
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(304,7000,2018-07-21,204,101);
+Query OK, 1 row affected, 1 warning (0.115 sec)
+
+MariaDB [lab3]> insert into orders(ono,amount,date,cid,sid) values(300,11000,2018-12-12,203,104);
+Query OK, 1 row affected, 1 warning (0.405 sec)
+
+MariaDB [lab3]> alter table orders add constraint c5 primary key(ono);
+Query OK, 0 rows affected, 1 warning (0.649 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+MariaDB [lab3]> insert into salesman(sid,city,commission) values(102,'jaipur',20);
+Query OK, 1 row affected (0.426 sec)
+
+MariaDB [lab3]> select *from customer;
++-----+-------+-----------+
+| cid | name  | city      |
++-----+-------+-----------+
+| 200 | cust1 | bhopal    |
+| 201 | cust2 | kolkatta  |
+| 202 | cust3 | bangalore |
+| 203 | cust4 | ahmedabad |
+| 204 | cust5 | delhi     |
++-----+-------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab3]> select *from salesman;
++-----+-----------+------------+
+| sid | city      | commission |
++-----+-----------+------------+
+| 100 | delhi     |         15 |
+| 101 | bangalore |         26 |
+| 102 | jaipur    |         20 |
+| 103 | chennai   |         26 |
+| 104 | hyderabad |         12 |
++-----+-----------+------------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab3]> select *from orders;
++-----+--------+------+------+------------+
+| ono | amount | cid  | sid  | date       |
++-----+--------+------+------+------------+
+| 300 |  11000 |  203 |  104 | 0000-00-00 |
+| 301 |  15000 |  200 |  100 | 0000-00-00 |
+| 302 |  10000 |  201 |  100 | 0000-00-00 |
+| 303 |  17000 |  202 |  103 | 0000-00-00 |
+| 304 |   7000 |  204 |  101 | 0000-00-00 |
++-----+--------+------+------+------------+
+5 rows in set (0.001 sec)
+
+MariaDB [lab3]> update orders set date='2018-06-06' where ono=301;
+Query OK, 1 row affected (0.396 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update orders set date='2018-01-06' where ono=302;
+Query OK, 1 row affected (0.411 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update orders set date='2019-02-18' where ono=303;
+Query OK, 1 row affected (0.109 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update orders set date='2018-07-21' where ono=304;
+Query OK, 1 row affected (0.131 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update orders set date='2018-12-12' where ono=300;
+Query OK, 1 row affected (0.106 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> select *from orders;
++-----+--------+------+------+------------+
+| ono | amount | cid  | sid  | date       |
++-----+--------+------+------+------------+
+| 300 |  11000 |  203 |  104 | 2018-12-12 |
+| 301 |  15000 |  200 |  100 | 2018-06-06 |
+| 302 |  10000 |  201 |  100 | 2018-01-06 |
+| 303 |  17000 |  202 |  103 | 2019-02-18 |
+| 304 |   7000 |  204 |  101 | 2018-07-21 |
++-----+--------+------+------+------------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab3]> select cid,name from customers;
+ERROR 1146 (42S02): Table 'lab3.customers' doesn't exist
+MariaDB [lab3]> select cid,name from customer;
++-----+-------+
+| cid | name  |
++-----+-------+
+| 200 | cust1 |
+| 201 | cust2 |
+| 202 | cust3 |
+| 203 | cust4 |
+| 204 | cust5 |
++-----+-------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab3]> select max(commission),sid,city from salesman;
++-----------------+------+-------+
+| max(commission) | sid  | city  |
++-----------------+------+-------+
+|              26 |  100 | delhi |
++-----------------+------+-------+
+1 row in set (0.000 sec)
+
+MariaDB [lab3]> update salesman set commission=27 where sid=103;
+Query OK, 1 row affected (0.385 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> select max(commission),sid,city from salesman;
++-----------------+------+-------+
+| max(commission) | sid  | city  |
++-----------------+------+-------+
+|              27 |  100 | delhi |
++-----------------+------+-------+
+1 row in set (0.000 sec)
+
+MariaDB [lab3]> select *from orders order by amount desc;
++-----+--------+------+------+------------+
+| ono | amount | cid  | sid  | date       |
++-----+--------+------+------+------------+
+| 303 |  17000 |  202 |  103 | 2019-02-18 |
+| 301 |  15000 |  200 |  100 | 2018-06-06 |
+| 300 |  11000 |  203 |  104 | 2018-12-12 |
+| 302 |  10000 |  201 |  100 | 2018-01-06 |
+| 304 |   7000 |  204 |  101 | 2018-07-21 |
++-----+--------+------+------+------------+
+5 rows in set (0.000 sec)
+
+MariaDB [lab3]> select name,cid,customer.city from customer,salesman where customer.city=salesman.city;
++-------+-----+-----------+
+| name  | cid | city      |
++-------+-----+-----------+
+| cust5 | 204 | delhi     |
+| cust3 | 202 | bangalore |
++-------+-----+-----------+
+2 rows in set (0.000 sec)
+
+MariaDB [lab3]> alter table salesman add sname varchar(15);
+Query OK, 0 rows affected (0.486 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [lab3]> update salesman set sname=salesman1 where sid=100;
+ERROR 1054 (42S22): Unknown column 'salesman1' in 'field list'
+MariaDB [lab3]> update salesman set sname='salesman1' where sid=100;
+Query OK, 1 row affected (0.427 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update salesman set sname='salesman2' where sid=101;
+Query OK, 1 row affected (0.134 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update salesman set sname='salesman3' where sid=102;
+Query OK, 1 row affected (0.127 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update salesman set sname='salesman4' where sid=103;
+Query OK, 1 row affected (0.255 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> update salesman set sname='salesman5' where sid=104;
+Query OK, 1 row affected (0.135 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [lab3]> select *from salesman;
++-----+-----------+------------+-----------+
+| sid | city      | commission | sname     |
++-----+-----------+------------+-----------+
+| 100 | delhi     |         15 | salesman1 |
+| 101 | bangalore |         26 | salesman2 |
+| 102 | jaipur    |         20 | salesman3 |
+| 103 | chennai   |         27 | salesman4 |
+| 104 | hyderabad |         12 | salesman5 |
++-----+-----------+------------+-----------+
+
+MariaDB [lab3]> select sname,sid,city from salesman where commission>25;
++-----------+-----+-----------+
+| sname     | sid | city      |
++-----------+-----+-----------+
+| salesman2 | 101 | bangalore |
+| salesman4 | 103 | chennai   |
++-----------+-----+-----------+
+
+MariaDB [lab3]> select name,amount from orders,customer where customer.cid=orders.cid;
++-------+--------+
+| name  | amount |
++-------+--------+
+| cust4 |  11000 |
+| cust1 |  15000 |
+| cust2 |  10000 |
+| cust3 |  17000 |
+| cust5 |   7000 |
++-------+--------+
+
+MariaDB [lab3]> select sname from salesman where sid in(select sid from orders);
++-----------+
+| sname     |
++-----------+
+| salesman1 |
+| salesman2 |
+| salesman4 |
+| salesman5 |
++-----------+
+
+MariaDB [lab3]> select sid,sname from salesman where sid in(select salesman.sid from orders,salesman where amount*salesman.commission/100>4000);
++-----+-----------+
+| sid | sname     |
++-----+-----------+
+| 103 | salesman4 |
+| 101 | salesman2 |
++-----+-----------+
